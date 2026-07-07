@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit — Unified Messaging Hub &amp; AI CRM</title>
+<meta name="description" content="Orbit pulls six channels into one inbox, drafts replies, files documents, books accounting and reads deadlines out of your mail. Private and self-hosted.">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Orbit — Unified Messaging Hub & AI CRM">
+<meta property="og:description" content="Every message in one place — and an AI that does the work.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128752;</text></svg>">
+<style>html,body{margin:0;background:#080b11}</style>
+</head>
+<body>
+<style>
+  :root{
+    --ground:#080b11; --panel:#0e131c; --panel-2:#141c28; --panel-3:#1a2432;
+    --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
+    --ink:#e9edf3; --ink-2:#aeb7c4; --muted:#7f8896;
+    --teal:#19E3C4; --teal-2:#14B8A6; --teal-dim:rgba(25,227,196,.10);
+    --income:#2dd4a7; --expense:#f8817a; --amber:#f4c257;
+    --blue:#5b9dff; --violet:#9b8cff; --green:#3ecf8e;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --r:16px; --r-sm:10px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0}
+  .wrap{
+    background:
+      radial-gradient(1200px 600px at 82% -8%, rgba(25,227,196,.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 4%, rgba(91,157,255,.07), transparent 55%),
+      var(--ground);
+    color:var(--ink); font-family:var(--sans); line-height:1.5;
+    -webkit-font-smoothing:antialiased; padding:0 20px 72px;
+  }
+  .col{max-width:1000px; margin:0 auto}
+  .mono{font-family:var(--mono)}
+  .eyebrow{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--teal); display:inline-flex; align-items:center; gap:9px;
+  }
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--teal); opacity:.7}
+
+  /* ---------- HERO ---------- */
+  header.hero{padding:74px 0 30px}
+  .brandline{display:flex; align-items:center; gap:12px; margin-bottom:30px}
+  .logo{
+    width:34px; height:34px; border-radius:9px; display:grid; place-items:center;
+    background:linear-gradient(150deg,var(--teal),var(--teal-2)); color:#04201b; font-size:19px;
+    box-shadow:0 6px 22px -6px rgba(25,227,196,.55);
+  }
+  .brandline b{font-size:16px; letter-spacing:.01em}
+  .brandline .ver{font-family:var(--mono); font-size:11px; color:var(--muted); border:1px solid var(--line); padding:2px 7px; border-radius:20px}
+  h1{
+    font-size:clamp(40px,7.5vw,78px); line-height:1.02; letter-spacing:-.03em; margin:.28em 0 .18em;
+    font-weight:680; text-wrap:balance;
+  }
+  h1 .grad{background:linear-gradient(92deg,var(--teal),#7ef0dd); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .lede{font-size:clamp(17px,2.1vw,21px); color:var(--ink-2); max-width:33em; text-wrap:pretty}
+  .herometa{display:flex; flex-wrap:wrap; gap:10px 22px; margin-top:26px; font-size:13.5px; color:var(--muted)}
+  .herometa span{display:inline-flex; align-items:center; gap:7px}
+  .dot{width:7px; height:7px; border-radius:50%; background:var(--teal)}
+
+  /* ---------- CHANNEL STRIP ---------- */
+  .channels{
+    display:flex; flex-wrap:wrap; gap:9px; margin:40px 0 4px;
+    border-top:1px solid var(--line); padding-top:26px;
+  }
+  .chip{
+    display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-2);
+    background:var(--panel); border:1px solid var(--line); padding:8px 13px; border-radius:22px;
+  }
+  .chip i{width:8px;height:8px;border-radius:50%; font-style:normal}
+
+  /* ---------- SECTIONS ---------- */
+  section.view{padding:56px 0 8px; border-top:1px solid var(--line); margin-top:52px}
+  .view-head{display:flex; flex-direction:column; gap:12px; margin-bottom:26px; max-width:44em}
+  .view-head h2{font-size:clamp(24px,3.4vw,33px); letter-spacing:-.02em; margin:2px 0 0; font-weight:640; text-wrap:balance}
+  .view-head p{margin:0; color:var(--ink-2); font-size:16px}
+  .view-head p b{color:var(--ink); font-weight:600}
+
+  /* ---------- APP MOCK SHELL ---------- */
+  .app{
+    border:1px solid var(--line); border-radius:var(--r); overflow:hidden;
+    background:linear-gradient(180deg,var(--panel),#0b1017);
+    box-shadow:0 30px 80px -40px rgba(0,0,0,.9), 0 2px 0 rgba(255,255,255,.02) inset;
+  }
+  .topbar{display:flex; align-items:center; gap:14px; padding:11px 16px; border-bottom:1px solid var(--line); background:rgba(255,255,255,.015)}
+  .tl{display:flex; gap:7px}
+  .tl i{width:11px;height:11px;border-radius:50%;background:#2b3543}
+  .topbar .b{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink)}
+  .topbar .b .lg{width:17px;height:17px;border-radius:5px;background:linear-gradient(150deg,var(--teal),var(--teal-2))}
+  .topbar nav{display:flex; gap:3px; margin-left:6px}
+  .topbar nav a{font-size:12.5px; color:var(--muted); padding:4px 10px; border-radius:8px; text-decoration:none}
+  .topbar nav a.on{color:var(--ground); background:var(--teal); font-weight:600}
+  .scrollx{overflow-x:auto}
+
+  /* ---------- INBOX MOCK ---------- */
+  .inbox{display:grid; grid-template-columns:168px 1fr; min-height:340px}
+  .rail{border-right:1px solid var(--line); padding:14px 12px; display:flex; flex-direction:column; gap:2px; background:rgba(0,0,0,.14)}
+  .rail .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.16em; color:var(--muted); margin:8px 4px 4px}
+  .rail a{display:flex; align-items:center; gap:9px; font-size:13px; color:var(--ink-2); padding:6px 8px; border-radius:8px; text-decoration:none}
+  .rail a.on{background:var(--teal-dim); color:var(--teal)}
+  .rail a i{width:8px;height:8px;border-radius:50%; font-style:normal}
+  .rail a b{margin-left:auto; font-family:var(--mono); font-size:10.5px; color:var(--muted); font-weight:400}
+  .list{display:flex; flex-direction:column}
+  .mail{padding:13px 16px; border-bottom:1px solid var(--line); display:flex; flex-direction:column; gap:4px}
+  .mail:last-child{border-bottom:none}
+  .mail .r1{display:flex; align-items:center; gap:9px; font-size:13.5px}
+  .mail .r1 .from{font-weight:600; color:var(--ink)}
+  .mail .r1 .badge{font-family:var(--mono); font-size:10px; color:var(--muted); border:1px solid var(--line); border-radius:5px; padding:1px 5px}
+  .mail .r1 .t{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--muted)}
+  .mail .subj{font-size:14px; color:var(--ink)}
+  .mail .prev{font-size:12.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .mail.sel{background:var(--teal-dim); box-shadow:inset 3px 0 0 var(--teal)}
+  .aibar{display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; background:rgba(0,0,0,.18); border-top:1px solid var(--line)}
+  .aibtn{font-size:12.5px; color:var(--ink-2); border:1px solid var(--line-2); background:var(--panel-2); padding:6px 12px; border-radius:9px; display:inline-flex; gap:6px; align-items:center}
+  .aibtn.p{color:var(--teal); border-color:rgba(25,227,196,.4); background:var(--teal-dim)}
+  .aibar .note{margin-left:auto; align-self:center; font-size:11.5px; color:var(--muted)}
+
+  /* ---------- ACCOUNTING MOCK ---------- */
+  .acct{padding:6px 0}
+  .acrow{display:grid; grid-template-columns:96px 1fr auto auto; align-items:center; gap:14px; padding:14px 18px; border-bottom:1px solid var(--line)}
+  .acrow:last-child{border-bottom:none}
+  .tag{font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; text-align:center; padding:4px 0; border-radius:20px}
+  .tag.in{color:var(--income); background:rgba(45,212,167,.12)}
+  .tag.out{color:var(--expense); background:rgba(248,129,122,.12)}
+  .acrow .name{font-weight:600; font-size:14px}
+  .acrow .sub{font-size:12px; color:var(--muted); margin-top:1px}
+  .amt{font-family:var(--mono); font-size:14px; font-variant-numeric:tabular-nums; text-align:right}
+  .lex{font-size:12px; color:var(--muted); border:1px solid var(--line); border-radius:8px; padding:5px 11px; white-space:nowrap}
+  .lex.done{color:var(--income); border-color:rgba(45,212,167,.35)}
+
+  /* ---------- FILES MOCK ---------- */
+  .files{padding:20px}
+  .searchrow{display:flex; gap:10px; margin-bottom:16px}
+  .searchrow .inp{flex:1; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 14px; font-size:14px; color:var(--ink)}
+  .searchrow .go{background:var(--teal); color:var(--ground); font-weight:600; border-radius:10px; padding:10px 18px; font-size:14px}
+  .aicard{border:1px solid rgba(25,227,196,.28); border-radius:13px; padding:15px 17px; background:linear-gradient(180deg,rgba(25,227,196,.07),rgba(25,227,196,.015)); margin-bottom:14px}
+  .aicard .h{font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; color:var(--teal); display:flex; align-items:center; gap:8px; margin-bottom:8px}
+  .aicard p{margin:0; font-size:14px; color:var(--ink-2)}
+  .frow{display:flex; align-items:center; gap:13px; padding:12px 15px; border:1px solid var(--line); border-radius:11px; margin-top:9px; background:rgba(255,255,255,.015)}
+  .frow .ic{font-size:20px}
+  .frow .fn{font-weight:600; font-size:14px}
+  .frow .fm{font-size:12px; color:var(--muted); margin-top:1px}
+  .frow .site{margin-left:auto; font-size:11.5px; color:var(--muted)}
+  .frow .open{font-size:12px; color:var(--ink-2); border:1px solid var(--line-2); border-radius:8px; padding:5px 11px}
+
+  /* ---------- SLIDES MOCK ---------- */
+  .slides{padding:20px}
+  .tags{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:18px}
+  .tag2{font-size:12px; color:var(--ink-2); background:rgba(25,227,196,.09); border:1px solid rgba(25,227,196,.16); border-radius:16px; padding:5px 11px}
+  .tag2.on{background:var(--teal); color:var(--ground); border-color:var(--teal); font-weight:600}
+  .slidegrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px}
+  .thumb{border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--panel-2)}
+  .thumb .pic{aspect-ratio:16/10; display:grid; place-items:center; color:rgba(255,255,255,.5); font-size:11px; font-family:var(--mono)}
+  .thumb .cap{padding:8px 10px; font-size:11.5px; color:var(--ink-2); border-top:1px solid var(--line)}
+  .slidebar{display:flex; align-items:center; gap:12px; margin-top:16px; padding-top:16px; border-top:1px solid var(--line)}
+  .basket{font-size:13px; color:var(--ink-2)}
+  .export{margin-left:auto; background:var(--teal); color:var(--ground); font-weight:600; border-radius:10px; padding:9px 16px; font-size:13.5px}
+
+  /* ---------- TASKS MOCK ---------- */
+  .board{display:grid; grid-template-columns:repeat(3,minmax(210px,1fr)); gap:14px; padding:18px; min-width:660px}
+  .cola h4{margin:0 0 12px; font-size:13px; display:flex; align-items:center; gap:8px}
+  .cola h4 span{font-family:var(--mono); font-size:11px; color:var(--muted)}
+  .cola h4::before{content:""; width:26px; height:2px; border-radius:2px}
+  .cola.over h4::before{background:var(--expense)}
+  .cola.today h4::before{background:var(--amber)}
+  .cola.week h4::before{background:var(--teal)}
+  .task{border:1px solid var(--line); border-radius:11px; padding:12px 13px; margin-bottom:10px; background:var(--panel-2); display:flex; flex-direction:column; gap:7px}
+  .task .tt{font-size:13.5px; font-weight:560; color:var(--ink)}
+  .task .ev{font-size:11.5px; color:var(--muted); border-left:2px solid var(--line-2); padding-left:8px}
+  .task .foot{display:flex; align-items:center; gap:8px}
+  .task .due{font-family:var(--mono); font-size:11px; color:var(--ink-2); background:rgba(255,255,255,.05); padding:2px 7px; border-radius:6px}
+  .kifrist{font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--amber); border:1px solid rgba(244,194,87,.35); border-radius:6px; padding:2px 6px}
+
+  /* ---------- CLOSING ---------- */
+  .close{margin-top:64px; border-top:1px solid var(--line); padding-top:44px; display:grid; grid-template-columns:repeat(3,1fr); gap:22px}
+  .pt h3{font-size:15px; margin:0 0 7px; display:flex; align-items:center; gap:9px}
+  .pt h3 em{font-style:normal; color:var(--teal)}
+  .pt p{margin:0; font-size:14px; color:var(--muted)}
+  footer{max-width:1000px; margin:56px auto 0; padding-top:26px; border-top:1px solid var(--line); display:flex; flex-wrap:wrap; gap:10px 20px; align-items:center; font-size:13px; color:var(--muted)}
+  footer .mono{color:var(--ink-2)}
+
+  @media(max-width:720px){
+    .inbox{grid-template-columns:1fr}
+    .rail{flex-direction:row; flex-wrap:wrap; border-right:none; border-bottom:1px solid var(--line)}
+    .rail .lbl{display:none}
+    .acrow{grid-template-columns:80px 1fr auto; }
+    .acrow .lex{display:none}
+    .close{grid-template-columns:1fr}
+  }
+</style>
+
+<div class="wrap">
+  <div class="col">
+
+    <header class="hero">
+      <div class="brandline">
+        <span class="logo">🛰</span>
+        <b>Orbit</b>
+        <span class="ver mono">v0.40.0</span>
+      </div>
+      <div class="eyebrow">Unified messaging hub · AI CRM</div>
+      <h1>Every message in <span class="grad">one place</span> — and an AI that does the work.</h1>
+      <p class="lede">Orbit pulls six channels into a single inbox, then drafts replies, files documents, books your accounting and reads deadlines out of your mail. Private and self-hosted — the AI proposes, you approve.</p>
+      <div class="herometa">
+        <span><i class="dot"></i> 6 channels, 1 inbox</span>
+        <span><i class="dot"></i> Draft · translate · rewrite</span>
+        <span><i class="dot"></i> Accounting &amp; document filing</span>
+        <span><i class="dot"></i> Runs on your own server</span>
+      </div>
+    </header>
+
+    <div class="channels">
+      <span class="chip"><i style="background:var(--expense)"></i> Work Mail</span>
+      <span class="chip"><i style="background:var(--expense)"></i> Personal Mail</span>
+      <span class="chip"><i style="background:var(--blue)"></i> iCloud</span>
+      <span class="chip"><i style="background:var(--blue)"></i> Telegram</span>
+      <span class="chip"><i style="background:var(--green)"></i> WhatsApp</span>
+      <span class="chip"><i style="background:var(--violet)"></i> Discord</span>
+      <span class="chip"><i style="background:var(--teal)"></i> Team / M365</span>
+    </div>
+
+    <!-- ===== INBOX ===== -->
+    <section class="view">
+      <div class="view-head">
+        <div class="eyebrow">The inbox</div>
+        <h2>One thread list for work, personal and social.</h2>
+        <p>Email, iCloud, Telegram, WhatsApp, Discord and your team channel land side by side. Open any message and the AI can <b>draft a reply</b>, <b>rewrite</b> your own text, or <b>translate</b> it — inline, in one click. It never sends on its own.</p>
+      </div>
+      <div class="app">
+        <div class="topbar">
+          <span class="tl"><i></i><i></i><i></i></span>
+          <span class="b"><span class="lg"></span> Orbit</span>
+          <nav><a class="on">Inbox</a><a>Files</a><a>Tasks</a><a>Accounting</a></nav>
+        </div>
+        <div class="scrollx"><div class="inbox">
+          <div class="rail">
+            <span class="lbl">Channels</span>
+            <a class="on">All <b>124</b></a>
+            <a><i style="background:var(--expense)"></i> Work Mail <b>38</b></a>
+            <a><i style="background:var(--expense)"></i> Personal <b>21</b></a>
+            <a><i style="background:var(--blue)"></i> iCloud <b>9</b></a>
+            <a><i style="background:var(--blue)"></i> Telegram <b>12</b></a>
+            <a><i style="background:var(--green)"></i> WhatsApp <b>18</b></a>
+            <a><i style="background:var(--violet)"></i> Discord <b>4</b></a>
+            <a><i style="background:var(--teal)"></i> Team <b>22</b></a>
+          </div>
+          <div>
+            <div class="list">
+              <div class="mail">
+                <div class="r1"><span class="from">Sarah Klein</span><span class="badge">✉ Mail</span><span class="t">12 min</span></div>
+                <div class="subj">Q2 report is ready for review</div>
+                <div class="prev">Hi, the quarterly numbers are in — could you take a look before Friday?</div>
+              </div>
+              <div class="mail sel">
+                <div class="r1"><span class="from">Michael Berg</span><span class="badge">✈ Telegram</span><span class="t">59 min</span></div>
+                <div class="subj">Re: partnership proposal</div>
+                <div class="prev">Thanks for the deck — the team is on board, let's schedule a call next week.</div>
+              </div>
+              <div class="mail">
+                <div class="r1"><span class="from">Signals Bot</span><span class="badge">✈ Telegram</span><span class="t">1 h</span></div>
+                <div class="subj">Portfolio update #4471</div>
+                <div class="prev">Current drawdown 3.2% (threshold 25%). All systems nominal.</div>
+              </div>
+              <div class="mail">
+                <div class="r1"><span class="from">Anna Weber</span><span class="badge">✉ Mail</span><span class="t">2 h</span></div>
+                <div class="subj">Invoice #2026-118</div>
+                <div class="prev">Please find attached the invoice for May services. Payment due in 14 days.</div>
+              </div>
+            </div>
+            <div class="aibar">
+              <span class="aibtn p">✨ AI draft</span>
+              <span class="aibtn">🖊 Rewrite</span>
+              <span class="aibtn">🌐 Translate</span>
+              <span class="note">Drafts stay in your outbox until you hit Send.</span>
+            </div>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ===== ACCOUNTING ===== -->
+    <section class="view">
+      <div class="view-head">
+        <div class="eyebrow">Accounting</div>
+        <h2>Invoices and receipts, tallied and reconciled by themselves.</h2>
+        <p>The AI recognises incoming invoices and payment receipts in your mail, sums up <b>open items per currency</b>, and ticks them off automatically once they match an entry in your accounting tool. One tap forwards a receipt straight to bookkeeping.</p>
+      </div>
+      <div class="app">
+        <div class="topbar">
+          <span class="tl"><i></i><i></i><i></i></span>
+          <span class="b"><span class="lg"></span> Orbit · Accounting</span>
+          <nav><a>Inbox</a><a>Files</a><a>Tasks</a><a class="on">Accounting</a></nav>
+        </div>
+        <div class="scrollx"><div class="acct">
+          <div class="acrow">
+            <span class="tag in">Income</span>
+            <div><div class="name">Signals Platform</div><div class="sub">Monthly settlement — June 2026</div></div>
+            <span class="amt" style="color:var(--income)">+249,00 $</span>
+            <span class="lex">→ bookkeeping</span>
+          </div>
+          <div class="acrow">
+            <span class="tag out">Expense</span>
+            <div><div class="name">CloudHost</div><div class="sub">Invoice payment confirmation</div></div>
+            <span class="amt" style="color:var(--expense)">−39,00 $</span>
+            <span class="lex done">✓ reconciled</span>
+          </div>
+          <div class="acrow">
+            <span class="tag out">Expense</span>
+            <div><div class="name">ServerHost</div><div class="sub">Invoice No. 100482</div></div>
+            <span class="amt" style="color:var(--expense)">−14,90 €</span>
+            <span class="lex">→ bookkeeping</span>
+          </div>
+          <div class="acrow">
+            <span class="tag in">Income</span>
+            <div><div class="name">Signals Platform</div><div class="sub">Payment confirmation</div></div>
+            <span class="amt" style="color:var(--income)">+95,00 €</span>
+            <span class="lex done">✓ reconciled</span>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ===== FILES ===== -->
+    <section class="view">
+      <div class="view-head">
+        <div class="eyebrow">Files &amp; knowledge</div>
+        <h2>Search your company drive — and get the answer, not just the file.</h2>
+        <p>Type one or two words. Orbit searches SharePoint by <b>name and content</b>, then the AI reads the matching documents and hands you a short summary of what actually matters.</p>
+      </div>
+      <div class="app">
+        <div class="topbar">
+          <span class="tl"><i></i><i></i><i></i></span>
+          <span class="b"><span class="lg"></span> Orbit · Files</span>
+          <nav><a>Inbox</a><a class="on">Files</a><a>Tasks</a><a>Accounting</a></nav>
+        </div>
+        <div class="files">
+          <div class="searchrow">
+            <div class="inp mono">bonus scheme KPI</div>
+            <span class="go">Search</span>
+          </div>
+          <div class="aicard">
+            <div class="h">✨ AI summary</div>
+            <p>The <b style="color:var(--ink)">2026 bonus scheme</b> ties payout to three KPIs — revenue, retention and upsell rate. Achievement starts at 80% and is capped at 120%. Paid quarterly; the Q2 figures are in the attached KPI report.</p>
+          </div>
+          <div class="frow"><span class="ic">📊</span><div><div class="fn">Bonus Scheme 2026 – Concept.pptx</div><div class="fm">Modified 3 days ago · 4.2 MB</div></div><span class="site">Team site</span><span class="open">Open</span></div>
+          <div class="frow"><span class="ic">📈</span><div><div class="fn">KPI Report Q2 2026.xlsx</div><div class="fm">Modified 6 days ago · 88 KB</div></div><span class="site">Team site</span><span class="open">Open</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDES ===== -->
+    <section class="view">
+      <div class="view-head">
+        <div class="eyebrow">Slide library</div>
+        <h2>Every slide you've ever made, auto-tagged and reusable.</h2>
+        <p>Drop in past decks; Orbit splits and <b>tags every slide</b>. Tell the AI the purpose of a new presentation and it assembles a draft from your library — then exports a real, editable <b>.pptx</b>.</p>
+      </div>
+      <div class="app">
+        <div class="topbar">
+          <span class="tl"><i></i><i></i><i></i></span>
+          <span class="b"><span class="lg"></span> Orbit · Slides</span>
+          <nav><a>Inbox</a><a>Files</a><a class="on">Slides</a><a>Tasks</a></nav>
+        </div>
+        <div class="slides">
+          <div class="tags">
+            <span class="tag2 on">all · 36</span>
+            <span class="tag2">topic:revenue</span>
+            <span class="tag2">topic:market-share</span>
+            <span class="tag2">topic:overview</span>
+            <span class="tag2">topic:results-report</span>
+            <span class="tag2">topic:agenda</span>
+            <span class="tag2">type:chart</span>
+            <span class="tag2">type:title</span>
+            <span class="tag2">topic:forecast 2026</span>
+          </div>
+          <div class="slidegrid">
+            <div class="thumb"><div class="pic" style="background:linear-gradient(135deg,#16324a,#0e2233)">Title slide</div><div class="cap">Q2 Review · Cover</div></div>
+            <div class="thumb"><div class="pic" style="background:linear-gradient(135deg,#123a34,#0d2420)">Agenda</div><div class="cap">Q2 Review · Agenda</div></div>
+            <div class="thumb"><div class="pic" style="background:linear-gradient(135deg,#2a2350,#161033)">Bar chart</div><div class="cap">Revenue by region</div></div>
+            <div class="thumb"><div class="pic" style="background:linear-gradient(135deg,#3a2418,#22140c)">KPI table</div><div class="cap">Results · KPIs</div></div>
+          </div>
+          <div class="slidebar">
+            <span class="basket">🧺 Basket · 3 slides selected</span>
+            <span class="export">⬇ Export as .pptx</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TASKS ===== -->
+    <section class="view">
+      <div class="view-head">
+        <div class="eyebrow">Tasks</div>
+        <h2>Deadlines lifted straight out of your messages.</h2>
+        <p>When a mail says "by next Wednesday", the AI turns it into a dated task and shows you <b>why</b> — with the sentence it came from. A "AI deadline" chip marks anything it created, so nothing slips.</p>
+      </div>
+      <div class="app">
+        <div class="topbar">
+          <span class="tl"><i></i><i></i><i></i></span>
+          <span class="b"><span class="lg"></span> Orbit · Tasks</span>
+          <nav><a>Inbox</a><a>Files</a><a class="on">Tasks</a><a>Accounting</a></nav>
+        </div>
+        <div class="scrollx"><div class="board">
+          <div class="cola over">
+            <h4>Overdue <span>2</span></h4>
+            <div class="task">
+              <div class="tt">Q3 campaign ends</div>
+              <div class="ev">"Campaign runs until 28 Nov" — Thomas Wagner</div>
+              <div class="foot"><span class="due">Fri 28 Nov</span><span class="kifrist">AI DEADLINE</span></div>
+            </div>
+            <div class="task">
+              <div class="tt">Reminder: supplier invoice</div>
+              <div class="ev">From scan "2026-01-12_invoice.pdf"</div>
+              <div class="foot"><span class="due">Mon 02 Feb</span><span class="kifrist">AI DEADLINE</span></div>
+            </div>
+          </div>
+          <div class="cola today">
+            <h4>Today <span>2</span></h4>
+            <div class="task">
+              <div class="tt">Join Teams meeting · Team North</div>
+              <div class="ev">"Microsoft Teams meeting" — Michael Berg</div>
+              <div class="foot"><span class="due">Tue 07 Jul</span><span class="kifrist">AI DEADLINE</span></div>
+            </div>
+            <div class="task">
+              <div class="tt">Escalate case R2-4471</div>
+              <div class="ev">"…open, escalated, overdue" — BillingApp</div>
+              <div class="foot"><span class="due">Tue 07 Jul</span></div>
+            </div>
+          </div>
+          <div class="cola week">
+            <h4>This week <span>3</span></h4>
+            <div class="task">
+              <div class="tt">Schedule maintenance window</div>
+              <div class="ev">"…runs 09–13h tomorrow" — Anna Weber</div>
+              <div class="foot"><span class="due">Wed 08 Jul</span><span class="kifrist">AI DEADLINE</span></div>
+            </div>
+            <div class="task">
+              <div class="tt">Product launch &amp; pre-sale</div>
+              <div class="ev">"Launch and pre-sale start 15.07." — David Fischer</div>
+              <div class="foot"><span class="due">Tue 15 Jul</span><span class="kifrist">AI DEADLINE</span></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ===== CLOSING ===== -->
+    <div class="close">
+      <div class="pt">
+        <h3><em>◆</em> Private by design</h3>
+        <p>Self-hosted on your own server. Your mail, files and contacts never leave it — no third-party cloud reading your inbox.</p>
+      </div>
+      <div class="pt">
+        <h3><em>◆</em> The AI proposes, you decide</h3>
+        <p>Every reply, forward and booking is a draft. Orbit prepares the work; you review and approve before anything goes out.</p>
+      </div>
+      <div class="pt">
+        <h3><em>◆</em> One cockpit, many jobs</h3>
+        <p>Messaging, CRM, accounting, document filing, a slide library and a task board — the tools of a work day, in a single place.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="col" data-author="Pitt Petruschke (PiP)" data-app="Orbit">
+    <span class="mono">Orbit v0.40.0</span>
+    <span>Unified messaging hub &amp; AI CRM</span>
+    <span style="margin-left:auto">© Pitt Petruschke — screens shown with sample data</span>
+  </footer>
+</div>
+<style>.wrap{min-height:100vh}</style>
+</body>
+</html>
