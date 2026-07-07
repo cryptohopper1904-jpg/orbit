@@ -176,6 +176,15 @@
   .task .due{font-family:var(--mono); font-size:11px; color:var(--ink-2); background:rgba(255,255,255,.05); padding:2px 7px; border-radius:6px}
   .kifrist{font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--amber); border:1px solid rgba(244,194,87,.35); border-radius:6px; padding:2px 6px}
 
+  /* ---------- AND MORE ---------- */
+  .more{display:grid; grid-template-columns:repeat(auto-fit,minmax(198px,1fr)); gap:14px}
+  .mtile{border:1px solid var(--line); border-radius:13px; padding:16px 16px 17px; background:linear-gradient(180deg,rgba(255,255,255,.02),transparent); display:flex; flex-direction:column; gap:7px}
+  .mtile .mi{font-size:21px}
+  .mtile b{font-size:14.5px; color:var(--ink); font-weight:620}
+  .mtile p{margin:0; font-size:13px; color:var(--muted); line-height:1.45}
+  .mtile.key{border-color:rgba(25,227,196,.3); background:linear-gradient(180deg,rgba(25,227,196,.06),transparent)}
+  .mtile.key b{color:var(--teal)}
+
   /* ---------- CLOSING ---------- */
   .close{margin-top:64px; border-top:1px solid var(--line); padding-top:44px; display:grid; grid-template-columns:repeat(3,1fr); gap:22px}
   .pt h3{font-size:15px; margin:0 0 7px; display:flex; align-items:center; gap:9px}
@@ -446,6 +455,22 @@
             </div>
           </div>
         </div></div>
+      </div>
+    </section>
+
+    <!-- ===== AND MORE ===== -->
+    <section class="view">
+      <div class="view-head">
+        <div class="eyebrow">Rounding it out</div>
+        <h2>The rest of a working day, in the same place.</h2>
+        <p>Beyond the five pillars, Orbit keeps the everyday tools right where the messages already are — so you rarely reach for another tab.</p>
+      </div>
+      <div class="more">
+        <div class="mtile"><span class="mi">📅</span><b>Calendar</b><p>Your appointments synced in — today and what's next at a glance, beside the mail they came from.</p></div>
+        <div class="mtile"><span class="mi">👤</span><b>Contacts &amp; CRM</b><p>Every sender becomes a contact with full history, company and open items.</p></div>
+        <div class="mtile"><span class="mi">📚</span><b>Knowledge base</b><p>Facts the AI lifts out of your messages — searchable and linked back to the source.</p></div>
+        <div class="mtile"><span class="mi">👁</span><b>Mail preview</b><p>Read and reply in a split view — no signature icons in the way — without leaving the thread list.</p></div>
+        <div class="mtile key"><span class="mi">🔒</span><b>Three separate worlds</b><p>Private, business and work stay strictly apart. Nothing from one ever leaks into another.</p></div>
       </div>
     </section>
 
