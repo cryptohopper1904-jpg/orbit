@@ -3,733 +3,591 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Orbit — Ein Posteingang für alles &amp; KI-CRM</title>
-<meta name="description" content="Orbit bündelt sechs Kanäle in einem Posteingang, schreibt Antwortentwürfe, legt Dokumente ab, verbucht Rechnungen und liest Fristen aus deinen Mails. Privat und auf dem eigenen Server.">
+<title>Orbit — Ein Posteingang für alles, mit KI</title>
+<meta name="description" content="Orbit bündelt Mail, Microsoft 365, Telegram, WhatsApp und Discord in einem Posteingang, sortiert nach dem, was dich braucht, und schreibt die Antwort schon vor. Läuft auf deinem eigenen Server.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#f4f5f1">
-<meta property="og:title" content="Orbit — Ein Posteingang für alles & KI-CRM">
-<meta property="og:description" content="Jede Nachricht an einem Ort — und eine KI, die die Arbeit macht.">
+<meta property="og:title" content="Orbit — Ein Posteingang für alles, mit KI">
+<meta property="og:description" content="Orbit bündelt Mail, Microsoft 365, Telegram, WhatsApp und Discord in einem Posteingang, sortiert nach dem, was dich braucht, und schreibt die Antwort schon vor. Läuft auf deinem eigenen Server.">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230f766e'/><circle cx='16' cy='16' r='5' fill='white'/><ellipse cx='16' cy='16' rx='12' ry='5' fill='none' stroke='white' stroke-width='2' transform='rotate(-28 16 16)'/></svg>">
 <link rel="alternate" hreflang="de" href="https://cryptohopper1904-jpg.github.io/orbit/">
 <link rel="alternate" hreflang="en" href="https://cryptohopper1904-jpg.github.io/orbit/en/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230f766e'/><circle cx='16' cy='16' r='5' fill='white'/><ellipse cx='16' cy='16' rx='12' ry='5' fill='none' stroke='white' stroke-width='2' transform='rotate(-28 16 16)'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<!-- Generiert aus src/template.html + src/strings.py mit build.py — hier nicht von Hand ändern. PiP -->
 <style>
-  /* ------------------------------------------------------------------------
-     Orbit showcase — built on the Nov 2026 design system (same as AlgoVerdict):
-     warm off-white canvas, white surfaces, hairline borders, deep teal accent,
-     Geist for everything, Instrument Serif only for ONE accent word per H1,
-     exactly one dark summary block per page. Radii: 8 / 12 / 20.
-  ------------------------------------------------------------------------ */
+  /* Design-System Nov 2026 (wie AlgoVerdict und die Orbit-App): warmes Off-White, weiße Flächen,
+     Haarlinien, tiefes Teal, Geist; Instrument Serif nur für EIN Akzentwort; genau ein dunkler Block. */
   :root{
-    --bg:#f4f5f1; --fg:#0a141c;
-    --ink:#0a141c; --ink-80:rgba(10,20,28,.80); --ink-70:rgba(10,20,28,.70); --ink-60:rgba(10,20,28,.68);
-    --accent:#0f766e; --accent-hover:#0b5f58; --accent-soft:#e1f1ed;
-    --surface:#ffffff; --muted:#eef0ea; --border:#e1e4dc; --border-strong:#cdd3c9;
+    --bg:#f4f5f1; --bg-2:#eef0ea; --ink:#0a141c; --ink-80:rgba(10,20,28,.80); --ink-70:rgba(10,20,28,.70); --ink-60:rgba(10,20,28,.66);
+    --accent:#0f766e; --accent-2:#0b5f58; --accent-soft:#e1f1ed; --accent-line:rgba(15,118,110,.30);
+    --surface:#fff; --border:#e1e4dc; --border-2:#cdd3c9; --hover:#f3f4ef;
     --block:#0d1a24; --block-text:#c3ced6; --block-line:rgba(255,255,255,.1); --block-accent:#7ee3d4;
-    --gain:#0f7a3a; --loss:#c2352d; --warning:#8a5a00; --danger:#b91c1c;
-    /* channel colours — one per source, used only as small marks */
-    --ch-mail:#d9480f; --ch-icloud:#2f6fde; --ch-tg:#1f8fcf; --ch-wa:#15803d; --ch-dc:#5865f2; --ch-team:#0f766e;
-    --sans:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-    --mono:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
-    --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
-    --r-sm:8px; --r:12px; --r-block:20px;
-    --shadow-card:0 1px 2px rgb(13 26 36 / .04), 0 10px 28px -14px rgb(13 26 36 / .14);
-    --shadow-pop:0 1px 2px rgb(13 26 36 / .06), 0 18px 40px -16px rgb(13 26 36 / .22);
+    --gain:#0f7a3a; --warn:#8a5a00; --danger:#b91c1c;
+    --ch-mail:#d9480f; --ch-m365:#2f6fde; --ch-tg:#1f8fcf; --ch-wa:#15803d; --ch-dc:#5865f2;
+    --sans:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; --mono:"Geist Mono",ui-monospace,Menlo,monospace; --serif:"Instrument Serif",Georgia,serif;
+    --r-sm:8px; --r:12px; --r-lg:20px;
+    --sh-1:0 1px 2px rgb(13 26 36 / .04); --sh-card:0 1px 2px rgb(13 26 36 / .04),0 10px 28px -14px rgb(13 26 36 / .14);
+    --sh-pop:0 1px 2px rgb(13 26 36 / .06),0 24px 60px -24px rgb(13 26 36 / .28);
   }
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth; scroll-padding-top:76px}
-  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased}
+  html{scroll-behavior:smooth;scroll-padding-top:72px}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+  body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
   a{color:inherit}
-  .container{width:100%; max-width:1280px; margin-inline:auto; padding-inline:20px}
+  button{font:inherit;color:inherit;cursor:pointer}
+  .container{width:100%;max-width:1280px;margin-inline:auto;padding-inline:20px}
   @media (min-width:640px){.container{padding-inline:24px}}
   @media (min-width:1024px){.container{padding-inline:40px}}
-  .mono{font-family:var(--mono)}
-  .num{font-variant-numeric:tabular-nums}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .kicker{display:inline-flex;align-items:center;gap:8px;margin:0;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+  .kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px var(--accent-soft)}
+  h1,h2,h3{margin:0;letter-spacing:-.025em;text-wrap:balance}
+  h1 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent);letter-spacing:-.01em;padding-right:.04em}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:12px;font-size:15px;font-weight:600;text-decoration:none;white-space:nowrap;border:1px solid transparent;transition:background .15s,border-color .15s}
+  .btn.sm{height:36px;padding:0 14px;font-size:14px;border-radius:10px}
+  .btn.primary{background:var(--ink);color:var(--bg)} .btn.primary:hover{background:rgba(10,20,28,.85)}
+  .btn.outline{border-color:var(--border-2);background:var(--surface);color:var(--ink)} .btn.outline:hover{border-color:rgba(10,20,28,.4)}
+  .pill{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border-radius:999px;border:1px solid var(--border);background:var(--bg-2);color:var(--ink-80);padding:1px 9px;font-size:12.5px;font-weight:600;line-height:20px}
+  .pill.accent{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent)}
+  .pill.good{border-color:rgba(15,122,58,.25);background:rgba(15,122,58,.08);color:var(--gain)}
+  .pill.warn{border-color:rgba(138,90,0,.25);background:rgba(138,90,0,.08);color:var(--warn)}
+  .pill.bad{border-color:rgba(185,28,28,.22);background:rgba(185,28,28,.07);color:var(--danger)}
+  .pill .d{width:6px;height:6px;border-radius:50%;background:var(--dot,currentColor)}
 
-  /* ---------- kicker / headings / buttons / pills ---------- */
-  .kicker{display:inline-flex; align-items:center; gap:8px; margin:0; font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--accent)}
-  .kicker::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor; box-shadow:0 0 0 4px var(--accent-soft); flex:none}
-  h1,h2,h3{margin:0; letter-spacing:-.025em; text-wrap:balance}
-  h1 em, .accent-em{font-family:var(--serif); font-style:italic; font-weight:400; color:var(--accent); letter-spacing:-.01em; padding-right:.04em}
-  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; height:44px; padding:0 20px; border-radius:12px; font-size:15px; font-weight:600; text-decoration:none; transition:background-color .15s, border-color .15s; white-space:nowrap}
-  .btn.sm{height:36px; padding:0 14px; font-size:14px; border-radius:10px}
-  .btn.primary{background:var(--ink); color:var(--bg)}
-  .btn.primary:hover{background:rgba(10,20,28,.85)}
-  .btn.outline{border:1px solid var(--border-strong); background:var(--surface); color:var(--ink)}
-  .btn.outline:hover{border-color:rgba(10,20,28,.4)}
-  .btn.accent{background:var(--accent); color:#fff}
-  .btn.accent:hover{background:var(--accent-hover)}
-  .btn:focus-visible, a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-  .pill{display:inline-flex; align-items:center; gap:6px; white-space:nowrap; border-radius:999px; border:1px solid var(--border); background:var(--muted); color:var(--ink-80); padding:1px 9px; font-size:12.5px; font-weight:600; line-height:20px}
-  .pill.dot::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--dot,currentColor)}
-  .pill.accent{border-color:rgba(15,118,110,.3); background:var(--accent-soft); color:var(--accent)}
-  .pill.good{border-color:rgba(21,112,58,.25); background:rgba(21,112,58,.08); color:var(--gain)}
-  .pill.warn{border-color:rgba(138,90,0,.25); background:rgba(138,90,0,.08); color:var(--warning)}
-  .pill.bad{border-color:rgba(185,28,28,.22); background:rgba(185,28,28,.07); color:var(--danger)}
-
-  /* ---------- site header ---------- */
-  .site-header{position:sticky; top:0; z-index:50; border-bottom:1px solid var(--border); background:rgba(244,245,241,.82); backdrop-filter:blur(12px) saturate(1.5); -webkit-backdrop-filter:blur(12px) saturate(1.5)}
-  .site-header .container{display:flex; align-items:center; gap:24px; height:62px}
-  .brand{display:flex; align-items:center; gap:10px; text-decoration:none; flex:none}
-  .brand .mark{width:30px; height:30px; flex:none}
-  .brand b{font-size:17px; font-weight:700; letter-spacing:-.02em}
-  .brand .ver{font-family:var(--mono); font-size:11.5px; color:var(--ink-60); border:1px solid var(--border); background:var(--surface); padding:1px 7px; border-radius:999px}
-  .site-nav{display:flex; gap:2px; margin-left:8px}
-  .site-nav a{font-size:14.5px; font-weight:500; color:var(--ink-70); text-decoration:none; padding:7px 11px; border-radius:8px}
-  .site-nav a:hover{background:var(--muted); color:var(--ink)}
-  .site-header .right{margin-left:auto; display:flex; align-items:center; gap:10px}
-  .selfhost{display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--ink-70)}
-  .selfhost::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--gain); box-shadow:0 0 0 3px rgba(15,122,58,.14)}
-  @media (max-width:1023px){.site-nav{display:none}}
-  @media (max-width:560px){.selfhost{display:none}}
-  .brand .ver{display:none}
-
-  .lang{display:inline-flex; border:1px solid var(--border); background:var(--surface); border-radius:8px; padding:2px; font-size:13px; font-weight:600}
-  .lang a, .lang span{padding:3px 8px; border-radius:6px; text-decoration:none; color:var(--ink-60)}
-  .lang span{background:var(--muted); color:var(--ink)}
-  .lang a:hover{color:var(--ink)}
+  /* ---------- header ---------- */
+  .site-header{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border);background:rgba(244,245,241,.84);backdrop-filter:blur(12px) saturate(1.5);-webkit-backdrop-filter:blur(12px) saturate(1.5)}
+  .site-header .container{display:flex;align-items:center;gap:22px;height:60px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+  .brand svg{width:28px;height:28px}
+  .brand b{font-size:17px;font-weight:700;letter-spacing:-.02em}
+  .site-nav{display:flex;gap:2px}
+  .site-nav a{font-size:14.5px;font-weight:500;color:var(--ink-70);text-decoration:none;padding:7px 11px;border-radius:8px}
+  .site-nav a:hover{background:var(--hover);color:var(--ink)}
+  .site-header .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .lang{display:inline-flex;border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:2px;font-size:13px;font-weight:600}
+  .lang a,.lang span{padding:3px 8px;border-radius:6px;text-decoration:none;color:var(--ink-60)}
+  .lang span{background:var(--bg-2);color:var(--ink)}
+  @media (max-width:860px){.site-nav{display:none}}
+  @media (max-width:420px){.site-header .btn{display:none}}
 
   /* ---------- hero ---------- */
-  .hero{position:relative; isolation:isolate; border-bottom:1px solid var(--border)}
-  .hero::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background:radial-gradient(48% 70% at 12% 0%, rgba(15,118,110,.13), transparent 70%)}
-  .hero .container{display:grid; gap:22px; padding-top:48px; padding-bottom:40px}
-  .hero h1{max-width:20ch; font-size:clamp(2.25rem,5.6vw,4.25rem); line-height:1; font-weight:750; letter-spacing:-.035em}
-  .lede{max-width:58ch; margin:0; font-size:clamp(17px,1.8vw,19.5px); line-height:1.6; color:var(--ink-80); text-wrap:pretty}
-  .actions{display:flex; flex-wrap:wrap; gap:12px; padding-top:4px}
+  .hero{position:relative;isolation:isolate}
+  .hero::before{content:"";position:absolute;inset:0 0 40% 0;z-index:-1;background:radial-gradient(50% 80% at 10% 0%,rgba(15,118,110,.12),transparent 70%)}
+  .hero-text{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px 56px;align-items:end;padding-top:56px;padding-bottom:28px}
+  .hero h1{font-size:clamp(2.2rem,5vw,4rem);line-height:1.02;font-weight:750;letter-spacing:-.035em;max-width:16ch}
+  .hero-side{display:grid;gap:18px;padding-bottom:6px}
+  .lede{margin:0;font-size:clamp(16.5px,1.6vw,18.5px);line-height:1.6;color:var(--ink-80)}
+  .actions{display:flex;flex-wrap:wrap;gap:10px}
+  @media (max-width:900px){.hero-text{grid-template-columns:1fr;padding-top:40px}}
 
-  /* the ONE dark block on the page */
-  .darkstrip{margin-top:18px; background:var(--block); color:var(--block-text); border-radius:var(--r-block); display:grid; grid-template-columns:repeat(4,1fr); overflow:hidden}
-  .darkstrip > div{padding:22px 24px; border-left:1px solid var(--block-line)}
-  .darkstrip > div:first-child{border-left:0}
-  .darkstrip .k{display:block; font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--block-accent)}
-  .darkstrip .v{display:block; margin-top:6px; font-size:clamp(28px,3.4vw,40px); font-weight:700; letter-spacing:-.03em; color:#fff; line-height:1.05}
-  .darkstrip .s{display:block; margin-top:6px; font-size:14px; line-height:1.45}
-  @media (max-width:800px){.darkstrip{grid-template-columns:1fr 1fr} .darkstrip > div:nth-child(3){border-left:0} .darkstrip > div:nth-child(n+3){border-top:1px solid var(--block-line)}}
+  /* ---------- live demo ---------- */
+  .demo-hint{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:0 0 10px;font-size:13.5px;color:var(--ink-60)}
+  .demo-hint b{color:var(--ink);font-weight:600}
+  .demo-hint .live{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--accent)}
+  .demo-hint .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .demo-hint kbd{font:500 11px var(--mono);border:1px solid var(--border-2);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--surface)}
+  .app{border:1px solid var(--border);border-radius:var(--r);background:var(--surface);box-shadow:var(--sh-pop);overflow:hidden}
+  .appbar{display:flex;align-items:center;gap:14px;padding:10px 14px;border-bottom:1px solid var(--border)}
+  .appbar .tl{display:flex;gap:6px}.appbar .tl i{width:10px;height:10px;border-radius:50%;background:var(--border-2)}
+  .appbar .ab{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700}.appbar .ab svg{width:18px;height:18px}
+  .appbar nav{display:flex;gap:2px}.appbar nav span{font-size:13px;color:var(--ink-60);padding:5px 10px;border-radius:8px;font-weight:500}
+  .appbar nav span.on{color:var(--ink);background:var(--bg-2);font-weight:600}
+  .appbar .search{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-60);border:1px solid var(--border);background:var(--bg);border-radius:8px;padding:5px 10px;min-width:210px}
+  @media (max-width:900px){.appbar .search{display:none}.appbar nav span:not(.on){display:none}}
 
+  .inbox{display:grid;grid-template-columns:208px minmax(0,1fr) minmax(0,1.2fr);height:640px}
+  .rail{border-right:1px solid var(--border);background:var(--bg);padding:12px 10px;display:flex;flex-direction:column;gap:1px;overflow:auto}
+  .worlds{display:flex;gap:3px;padding:3px;margin-bottom:6px;background:var(--bg-2);border-radius:9px}
+  .worlds button{flex:1;border:0;background:transparent;font-size:12.5px;font-weight:600;padding:5px 0;border-radius:7px;color:var(--ink-60)}
+  .worlds button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(13 26 36 / .1)}
+  .rail .lbl{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);margin:12px 8px 5px}
+  .rail .it{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;font-size:14px;color:var(--ink-80);padding:7px 8px;border-radius:8px}
+  .rail .it:hover{background:var(--hover)}
+  .rail .it[aria-current="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 0 0 1px var(--border),var(--sh-1)}
+  .rail .it svg{width:16px;height:16px;flex:none;color:var(--ink-60)} .rail .it[aria-current="true"] svg{color:var(--accent)}
+  .rail .it .c{margin-left:auto;font-size:12.5px;color:var(--ink-60);font-variant-numeric:tabular-nums}
+  .rail .it[aria-current="true"] .c{color:var(--accent);font-weight:700}
+  .rail .it .dot{width:8px;height:8px;border-radius:50%;margin:0 4px;flex:none}
+  .rail .it.ch{cursor:default} .rail .it.ch:hover{background:transparent}
+
+  .list{border-right:1px solid var(--border);display:flex;flex-direction:column;min-width:0;overflow:auto}
+  .listhead{position:sticky;top:0;z-index:1;background:var(--surface);display:flex;align-items:baseline;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border)}
+  .listhead h3{font-size:16px;font-weight:650}
+  .listhead .sub{font-size:13px;color:var(--ink-60)}
+  .grp{display:flex;gap:8px;padding:12px 16px 6px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-60)}
+  .grp .cnt{font:500 12px var(--mono);letter-spacing:0}
+  .row{position:relative;display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;width:100%;text-align:left;border:0;border-top:1px solid var(--border);background:var(--surface);padding:11px 16px;transition:background .12s}
+  .grp + .row{border-top:0}
+  .row:hover{background:var(--hover)}
+  .row[aria-selected="true"]{background:var(--accent-soft)}
+  .row[aria-selected="true"]::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--accent)}
+  .av{position:relative;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--ink-80)}
+  .av .src{position:absolute;right:-3px;bottom:-3px;width:17px;height:17px;border-radius:50%;border:2px solid var(--surface);display:grid;place-items:center;color:#fff;font-size:8.5px;font-weight:800}
+  .row[aria-selected="true"] .av .src{border-color:var(--accent-soft)}
+  .r1{display:flex;align-items:baseline;gap:8px;min-width:0}
+  .who{font-size:14.5px;font-weight:500;color:var(--ink-80);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row.unread .who{font-weight:650;color:var(--ink)}
+  .row.unread .who::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-left:7px;vertical-align:1px}
+  .time{margin-left:auto;flex:none;font-size:12.5px;color:var(--ink-60);font-variant-numeric:tabular-nums}
+  .subj{font-size:14px;color:var(--ink-70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+  .row.unread .subj{color:var(--ink)}
+  .prev{font-size:13.5px;color:var(--ink-60);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .prev.ok{color:var(--gain)}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+  .bundle{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;border-top:1px solid var(--border);background:var(--bg);padding:12px 16px;font-size:14px;color:var(--ink-70)}
+  .bundle:hover{background:var(--bg-2)}
+  .bundle .stack{display:flex}.bundle .stack span{width:24px;height:24px;border-radius:50%;border:2px solid var(--bg);margin-left:-7px;display:grid;place-items:center;color:#fff;font-size:9px;font-weight:800}
+  .bundle .stack span:first-child{margin-left:0}
+  .bundle b{color:var(--ink);font-weight:600}
+  .bundle .go{margin-left:auto;font-size:13px;color:var(--accent);font-weight:600;white-space:nowrap}
+  .bots{list-style:none;margin:0;padding:0 16px 10px;background:var(--bg)}
+  .bots li{display:flex;gap:10px;align-items:baseline;padding:7px 0;border-top:1px dashed var(--border-2);font-size:13.5px;color:var(--ink-70)}
+  .bots li b{color:var(--ink);font-weight:600;white-space:nowrap}
+  .bots li span:last-child{margin-left:auto;color:var(--ink-60);font-size:12.5px;white-space:nowrap}
+  .empty{padding:40px 20px;text-align:center;color:var(--ink-60);font-size:14.5px}
+  .empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+
+  .read{display:flex;flex-direction:column;min-width:0;overflow:auto;background:var(--surface)}
+  .rhead{padding:14px 20px 12px;border-bottom:1px solid var(--border)}
+  .back{display:none;border:0;background:none;padding:0 0 8px;font-size:14px;font-weight:600;color:var(--accent)}
+  .rhead h3{font-size:18px;font-weight:650;line-height:1.25}
+  .rmeta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
+  .sum{flex-basis:100%;font-size:14px;color:var(--ink-80);margin-top:2px}
+  .sum::before{content:"✦ ";color:var(--accent)}
+  .facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:9px 20px;border-bottom:1px solid var(--border)}
+  .facts span{display:block;font-size:12px;color:var(--ink-60)} .facts b{display:block;font-size:13.5px;font-weight:600}
+  .rbody{padding:16px 20px 18px;display:flex;flex-direction:column;gap:14px}
+  .msg{display:grid;grid-template-columns:30px minmax(0,1fr);gap:11px}
+  .msg .av{width:30px;height:30px;font-size:11px}
+  .msg .mh{display:flex;gap:8px;align-items:baseline;font-size:13.5px} .msg .mh b{font-weight:600} .msg .mh span{color:var(--ink-60);font-size:12.5px}
+  .msg p{margin:3px 0 0;font-size:14.5px;line-height:1.6;color:var(--ink-80)}
+  .msg.me p{color:var(--ink-60)}
+  .tr{margin-top:8px;padding:8px 11px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+  .tr small{display:block;font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+  .found{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:9px 12px;border:1px dashed var(--border-2);border-radius:10px;font-size:13px}
+  .found > span:first-child{font-weight:600}
+  .draft{border:1px solid var(--accent-line);background:linear-gradient(180deg,#f0f8f5,#fff 70%);border-radius:12px;padding:13px 15px}
+  .draft .dh{display:flex;flex-wrap:wrap;align-items:center;row-gap:2px;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+  .draft .dh .tone{margin-left:auto;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink-60);white-space:nowrap}
+  .draft p{margin:8px 0 0;font-size:14.5px;line-height:1.6}
+  .dactions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:13px}
+  .tbtn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--border-2);background:var(--surface);font-size:13px;font-weight:600;color:var(--ink-80)}
+  .tbtn:hover{border-color:rgba(10,20,28,.4)}
+  .tbtn.send{background:var(--ink);border-color:var(--ink);color:#fff} .tbtn.send:hover{background:rgba(10,20,28,.85)}
+  .tbtn kbd{font:500 10.5px var(--mono);opacity:.65}
+  .dactions .note{margin-left:auto;font-size:12.5px;color:var(--ink-60)}
+  .done-box{border:1px solid rgba(15,122,58,.25);background:rgba(15,122,58,.06);border-radius:12px;padding:13px 15px;font-size:14.5px;color:var(--gain);font-weight:600}
+  .done-box span{display:block;font-weight:400;color:var(--ink-70);font-size:13.5px;margin-top:2px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;z-index:80;background:var(--ink);color:#fff;font-size:14px;padding:10px 16px;border-radius:10px;box-shadow:var(--sh-pop);transition:opacity .2s,transform .2s;pointer-events:none;max-width:calc(100vw - 32px)}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+
+  @media (max-width:1100px){.inbox{grid-template-columns:180px minmax(0,1fr) minmax(0,1fr)}}
+  @media (max-width:860px){
+    .inbox{grid-template-columns:minmax(0,1fr);height:auto}
+    .rail{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;border-right:0;border-bottom:1px solid var(--border);padding:10px;gap:6px;align-items:center}
+    .rail .lbl,.rail .ch{display:none}
+    .worlds{margin:0;flex:none}
+    .worlds button{padding:5px 10px}
+    .rail .it{flex:none;width:auto;background:var(--surface);box-shadow:0 0 0 1px var(--border)}
+    .list{border-right:0;max-height:none;overflow:visible}
+    .read{display:none}
+    .inbox.reading .list,.inbox.reading .rail{display:none}
+    .inbox.reading .read{display:flex}
+    .back{display:inline-block}
+    .facts{grid-template-columns:1fr 1fr}
+    .dactions .note{margin-left:0;flex-basis:100%}
+  }
+
+  /* ---------- the one dark block ---------- */
+  .darkstrip{margin-top:28px;background:var(--block);color:var(--block-text);border-radius:var(--r-lg);display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden}
+  .darkstrip > div{padding:22px 24px;border-left:1px solid var(--block-line)} .darkstrip > div:first-child{border-left:0}
+  .darkstrip .k{display:block;font:500 11.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--block-accent)}
+  .darkstrip .v{display:block;margin-top:6px;font-size:clamp(26px,3vw,36px);font-weight:700;letter-spacing:-.03em;color:#fff;line-height:1.05}
+  .darkstrip .s{display:block;margin-top:6px;font-size:14px;line-height:1.45}
+  @media (max-width:800px){.darkstrip{grid-template-columns:1fr 1fr}.darkstrip > div:nth-child(3){border-left:0}.darkstrip > div:nth-child(n+3){border-top:1px solid var(--block-line)}}
 
   /* ---------- sections ---------- */
-  section.view{padding:72px 0 0}
-  #inbox{padding-top:48px}
-  .sh{display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 32px; margin-bottom:28px}
-  .sh > div{display:grid; gap:10px; max-width:64ch}
-  .sh h2{font-size:clamp(26px,3.2vw,34px); line-height:1.12; font-weight:650}
-  .sh p{margin:0; color:var(--ink-70); font-size:16.5px}
-  .sh p b{color:var(--ink); font-weight:600}
-  .sh p.kicker{font-size:13px; color:var(--accent)}
+  section.block{padding-top:88px}
+  .sh{display:grid;gap:10px;max-width:62ch;margin-bottom:28px}
+  .sh h2{font-size:clamp(26px,3.2vw,36px);line-height:1.1;font-weight:650}
+  .sh p{margin:0;color:var(--ink-70);font-size:16.5px}
 
-  /* app frame */
-  .app{border:1px solid var(--border); border-radius:var(--r); background:var(--surface); box-shadow:var(--shadow-pop); overflow:hidden}
-  .appbar{display:flex; align-items:center; gap:14px; padding:10px 14px; border-bottom:1px solid var(--border); background:var(--surface)}
-  .appbar .tl{display:flex; gap:6px}
-  .appbar .tl i{width:10px; height:10px; border-radius:50%; background:var(--border-strong)}
-  .appbar .ab{display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600}
-  .appbar .ab svg{width:18px; height:18px}
-  .appbar nav{display:flex; gap:2px; margin-left:6px}
-  .appbar nav span{font-size:13px; color:var(--ink-60); padding:5px 10px; border-radius:8px; font-weight:500}
-  .appbar nav span.on{color:var(--ink); background:var(--muted)}
-  .appbar .search{margin-left:auto; display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-60); border:1px solid var(--border); background:var(--bg); border-radius:8px; padding:5px 10px; min-width:200px}
-  .appbar .search kbd{margin-left:auto; font-family:var(--mono); font-size:11px; border:1px solid var(--border-strong); border-bottom-width:2px; border-radius:5px; padding:0 5px; background:var(--surface); color:var(--ink-70)}
-  @media (max-width:820px){.appbar .search{display:none}}
-  @media (max-width:560px){.appbar nav span:not(.on){display:none}}
+  /* feature tabs */
+  .tabs{display:flex;gap:4px;padding:4px;background:var(--bg-2);border-radius:12px;width:max-content;max-width:100%;overflow-x:auto;margin-bottom:18px}
+  .tabs button{border:0;background:transparent;font-size:14.5px;font-weight:600;color:var(--ink-60);padding:8px 16px;border-radius:9px;white-space:nowrap}
+  .tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(13 26 36 / .1)}
+  .panel{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:28px;align-items:start;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;box-shadow:var(--sh-card)}
+  .panel[hidden]{display:none}
+  .panel h3{font-size:22px;font-weight:650;line-height:1.2}
+  .panel > div > p{margin:10px 0 0;color:var(--ink-70);font-size:15.5px}
+  .checks{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:9px}
+  .checks li{display:flex;gap:10px;font-size:15px;color:var(--ink-80)}
+  .checks li::before{content:"";flex:none;width:18px;height:18px;margin-top:2px;border-radius:50%;background:var(--accent-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f766e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/11px no-repeat}
+  .mock{border:1px solid var(--border);border-radius:var(--r);background:var(--bg);overflow:hidden}
+  .mock .mh{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface);font-size:13.5px;font-weight:600}
+  .mock .mh .pill{margin-left:auto}
+  @media (max-width:900px){.panel{grid-template-columns:1fr;padding:20px}}
+  /* buchhaltung */
+  .tot{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border-bottom:1px solid var(--border)}
+  .tot > div{padding:12px 14px;border-left:1px solid var(--border)} .tot > div:first-child{border-left:0}
+  .tot span{display:block;font-size:12px;font-weight:600;color:var(--ink-60);text-transform:uppercase;letter-spacing:.05em}
+  .tot b{display:block;font-size:20px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .frows{list-style:none;margin:0;padding:0}
+  .frows li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:11px 14px;border-top:1px solid var(--border);background:var(--surface);font-size:14px}
+  .frows li:first-child{border-top:0}
+  .frows .n b{display:block;font-weight:600} .frows .n span{font-size:12.5px;color:var(--ink-60)}
+  .frows .a{font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap} .frows .a.in{color:var(--gain)}
+  @media (max-width:520px){.frows li{grid-template-columns:minmax(0,1fr) auto}.frows li .pill{grid-column:1/-1;justify-self:start}.tot{grid-template-columns:1fr}.tot > div{border-left:0;border-top:1px solid var(--border)}.tot > div:first-child{border-top:0}}
+  /* wissen */
+  .q{margin:14px;display:flex;align-items:center;gap:10px;border:1px solid var(--border-2);border-radius:10px;padding:0 14px;height:44px;font-size:15px;background:var(--surface);box-shadow:0 0 0 4px var(--accent-soft)}
+  .q svg{width:17px;height:17px;color:var(--ink-60);flex:none}
+  .ans{margin:0 14px 12px;border:1px solid var(--accent-line);background:linear-gradient(180deg,#f0f8f5,#fff 80%);border-radius:12px;padding:13px 15px}
+  .ans .dh{font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+  .ans ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+  .ans li{display:flex;gap:9px;font-size:14.5px} .ans li::before{content:"";flex:none;width:6px;height:6px;margin-top:8px;border-radius:50%;background:var(--accent)}
+  .ans sup{font:600 10.5px var(--mono);color:var(--accent);margin-left:2px}
+  .srcf{display:flex;align-items:center;gap:12px;margin:0 14px 10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:14px}
+  .srcf .ic{width:30px;height:34px;border-radius:5px;display:grid;place-items:end center;padding-bottom:4px;color:#fff;font-size:8.5px;font-weight:800;flex:none}
+  .srcf b{font-weight:600} .srcf span{display:block;font-size:12.5px;color:var(--ink-60)}
+  .srcf .ref{font:600 11px var(--mono);color:var(--accent);border:1px solid var(--accent-line);border-radius:5px;padding:0 5px;margin-right:4px}
+  /* aufgaben */
+  .tasks{display:grid;gap:10px;padding:14px}
+  .task{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 13px;display:grid;gap:7px}
+  .task .tt{font-weight:600;font-size:14.5px;display:flex;gap:8px;align-items:center}
+  .task .tt .pill{margin-left:auto}
+  .task q{display:block;font-size:13.5px;color:var(--ink-70);border-left:2px solid var(--accent);padding-left:9px;quotes:"„" "“"}
+  .task .from{font-size:12.5px;color:var(--ink-60)}
+  /* leads */
+  .stages{display:flex;flex-wrap:wrap;gap:6px;padding:14px 14px 4px}
+  .stages span{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid var(--border-2);background:var(--surface)}
+  .stages span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
+  .stages span.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,#fff)}
+  .stages i{font-style:normal;color:var(--ink-60);font-weight:500}
+  .lead{margin:10px 14px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 13px;display:grid;gap:8px}
+  .lead .tt{display:flex;gap:8px;align-items:center;font-weight:600}
+  .lead .tt .pill{margin-left:auto}
+  .lead p{margin:0;font-size:14px;color:var(--ink-70)}
+  .lead .inv{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;padding:8px 11px;font-size:14px;color:var(--ink)}
+  .lead .inv small{display:block;font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
 
-  /* legend under a mock: numbered callouts that explain what you see */
-  .legend{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px}
-  .legend div{display:flex; gap:12px; align-items:flex-start; font-size:14.5px; color:var(--ink-70); line-height:1.5}
-  .legend b{color:var(--ink); font-weight:600}
-  .n{flex:none; width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff; font-size:12px; font-weight:700; display:inline-grid; place-items:center; font-family:var(--sans); line-height:1}
-  .n.on-mock{position:absolute; z-index:2; box-shadow:0 0 0 4px rgba(15,118,110,.18)}
-  @media (max-width:820px){.legend{grid-template-columns:1fr}}
-
-  /* ---------- INBOX (three panes) ---------- */
-  .inbox{display:grid; grid-template-columns:212px minmax(0,1fr) minmax(0,1.15fr); min-height:560px}
-  .rail{border-right:1px solid var(--border); background:var(--bg); padding:14px 10px; display:flex; flex-direction:column; gap:1px; position:relative}
-  .rail .lbl{font-size:11.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-60); margin:14px 8px 6px}
-  .rail .lbl:first-child{margin-top:2px}
-  .rail .it{display:flex; align-items:center; gap:10px; font-size:14px; color:var(--ink-80); padding:6px 8px; border-radius:8px}
-  .rail .it.on{background:var(--surface); color:var(--ink); font-weight:600; box-shadow:0 0 0 1px var(--border), 0 1px 2px rgb(13 26 36 / .05)}
-  .rail .it svg{width:16px; height:16px; flex:none; color:var(--ink-60)}
-  .rail .it.on svg{color:var(--accent)}
-  .rail .it .c{margin-left:auto; font-size:12.5px; color:var(--ink-60); font-variant-numeric:tabular-nums}
-  .rail .it.on .c{color:var(--accent); font-weight:700}
-  .rail .it i{width:8px; height:8px; border-radius:50%; flex:none; margin:0 4px}
-  .worlds{display:flex; gap:4px; padding:0 4px}
-  .worlds span{flex:1; text-align:center; font-size:12px; font-weight:600; padding:5px 0; border-radius:7px; color:var(--ink-60); border:1px solid transparent}
-  .worlds span.on{background:var(--surface); color:var(--ink); border-color:var(--border)}
-
-  .list{border-right:1px solid var(--border); display:flex; flex-direction:column; min-width:0; position:relative}
-  .listhead{display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--border)}
-  .listhead h3{font-size:16px; font-weight:650; letter-spacing:-.015em}
-  .listhead .sub{font-size:13px; color:var(--ink-60)}
-  .listhead .seg{margin-left:auto; display:flex; background:var(--muted); border-radius:8px; padding:2px}
-  .listhead .seg span{font-size:12.5px; font-weight:600; color:var(--ink-60); padding:3px 9px; border-radius:6px}
-  .listhead .seg span.on{background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgb(13 26 36 / .08)}
-  .grp{display:flex; align-items:center; gap:8px; padding:10px 16px 6px; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-60)}
-  .grp .cnt{font-family:var(--mono); letter-spacing:0; font-weight:500}
-  .row{display:grid; grid-template-columns:36px minmax(0,1fr); gap:12px; padding:11px 16px; border-top:1px solid var(--border); position:relative}
-  .grp + .row{border-top:0}
-  .row.unread .who::after{content:""; display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--accent); margin-left:7px; vertical-align:1px}
-  .row.sel{background:var(--accent-soft)}
-  .row.sel::before{content:""; position:absolute; left:0; top:8px; bottom:8px; width:3px; border-radius:0 3px 3px 0; background:var(--accent)}
-  .av{position:relative; width:36px; height:36px; border-radius:50%; display:grid; place-items:center; font-size:13px; font-weight:700; color:var(--ink-80)}
-  .av .src{position:absolute; right:-3px; bottom:-3px; width:17px; height:17px; border-radius:50%; border:2px solid var(--surface); display:grid; place-items:center; color:#fff; font-size:8.5px; font-weight:800}
-  .row.sel .av .src{border-color:var(--accent-soft)}
-  .r1{display:flex; align-items:baseline; gap:8px; min-width:0}
-  .who{font-size:14.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .row:not(.unread) .who{font-weight:500; color:var(--ink-80)}
-  .time{margin-left:auto; flex:none; font-size:12.5px; color:var(--ink-60); font-variant-numeric:tabular-nums}
-  .subj{font-size:14px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px}
-  .row:not(.unread) .subj{color:var(--ink-70)}
-  .prev{font-size:13.5px; color:var(--ink-60); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .prev.ok{color:var(--gain)}
-  .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:7px}
-  .bundle{display:flex; align-items:center; gap:12px; padding:12px 16px; border-top:1px solid var(--border); background:var(--bg); font-size:14px; color:var(--ink-70)}
-  .bundle .stack{display:flex}
-  .bundle .stack span{width:24px; height:24px; border-radius:50%; border:2px solid var(--bg); margin-left:-7px; display:grid; place-items:center; color:#fff; font-size:9px; font-weight:800}
-  .bundle .stack span:first-child{margin-left:0}
-  .bundle b{color:var(--ink); font-weight:600}
-  .bundle .go{margin-left:auto; font-size:13px; color:var(--accent); font-weight:600}
-
-  .read{display:flex; flex-direction:column; min-width:0; background:var(--surface); position:relative}
-  .rhead{padding:16px 20px 14px; border-bottom:1px solid var(--border)}
-  .rhead h3{font-size:18px; font-weight:650; letter-spacing:-.02em; line-height:1.25}
-  .rmeta{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:8px; font-size:13px; color:var(--ink-60)}
-  .rbody{padding:18px 20px; display:flex; flex-direction:column; gap:14px; flex:1}
-  .msg{display:grid; grid-template-columns:32px minmax(0,1fr); gap:12px}
-  .msg .av{width:32px; height:32px; font-size:12px}
-  .msg .mh{display:flex; gap:8px; align-items:baseline; font-size:13.5px}
-  .msg .mh b{font-weight:600}
-  .msg .mh span{color:var(--ink-60); font-size:12.5px}
-  .msg p{margin:4px 0 0; font-size:14.5px; line-height:1.6; color:var(--ink-80)}
-  .found{display:flex; flex-wrap:wrap; gap:8px; padding:10px 12px; border:1px dashed var(--border-strong); border-radius:10px; font-size:13px; color:var(--ink-70); align-items:center}
-  .found > span:first-child{font-weight:600; color:var(--ink)}
-  .draft{border:1px solid rgba(15,118,110,.3); background:linear-gradient(180deg,#f0f8f5,#fff 70%); border-radius:12px; padding:14px 16px; position:relative}
-  .draft .dh{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--accent)}
-  .draft .dh svg{width:15px; height:15px}
-  .draft .dh .tone{white-space:nowrap; margin-left:auto; text-transform:none; letter-spacing:0; font-weight:500; color:var(--ink-60)}
-  .draft p{margin:8px 0 0; font-size:14.5px; line-height:1.6; color:var(--ink)}
-  .dactions{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:14px}
-  .tbtn{display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface); font-size:13px; font-weight:600; color:var(--ink-80)}
-  .tbtn.send{background:var(--ink); border-color:var(--ink); color:#fff}
-  .tbtn kbd{font-family:var(--mono); font-size:10.5px; opacity:.65; font-weight:500}
-  .dactions .note{margin-left:auto; font-size:12.5px; color:var(--ink-60)}
-
-  .ctx{border-bottom:1px solid var(--border); background:var(--surface); padding:8px 20px}
-  .rmeta .sum{flex-basis:100%; font-size:14px; color:var(--ink-80)}
-  .earlier{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-60); padding-bottom:12px; border-bottom:1px solid var(--border)}
-  .earlier .av{width:28px; height:28px; font-size:10px; flex:none}
-  .earlier b{color:var(--ink-80); font-weight:600}
-  .earlier > span:nth-child(2){min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-  .earlier .more3{margin-left:auto; flex:none; font-weight:600; color:var(--accent)}
-  .ctx .ch{display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:var(--ink-70); margin-bottom:8px}
-  .ctx .cg{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
-  .ctx .cg span{display:block; font-size:12px; color:var(--ink-60)}
-  .ctx .cg b{display:block; font-size:13.5px; font-weight:600}
-  @media (max-width:560px){.ctx .cg{grid-template-columns:1fr 1fr}}
-  @media (max-width:1100px){
-    .inbox{grid-template-columns:180px minmax(0,1fr) minmax(0,1fr)}
-  }
-  @media (max-width:900px){
-    .inbox{grid-template-columns:1fr; min-height:0}
-    .rail{flex-direction:row; flex-wrap:nowrap; overflow-x:auto; border-right:0; border-bottom:1px solid var(--border); padding:10px; gap:6px}
-    .rail .lbl, .rail .worlds, .rail .ch{display:none}
-    .rail .it{flex:none; background:var(--surface); box-shadow:0 0 0 1px var(--border)}
-    .list{border-right:0; border-bottom:1px solid var(--border)}
-    .n.on-mock{display:none}
-    .rail .worlds{display:flex; flex:none; padding:0}
-    .rail .worlds span{padding:6px 10px}
-    .rail .it:nth-of-type(n+4){display:none}
-    .list .grp ~ .grp, .list .grp ~ .grp ~ .row{display:none}
-    .earlier, .ctx{display:none}
-    .dactions .tbtn:nth-child(n+3){display:none}
-    .bundle .go{white-space:nowrap}
-  }
-
-  /* ---------- ACCOUNTING ---------- */
-  .acct-top{display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid var(--border)}
-  .acct-top > div{padding:16px 20px; border-left:1px solid var(--border)}
-  .acct-top > div:first-child{border-left:0}
-  .acct-top .k{font-size:12.5px; font-weight:600; color:var(--ink-60); text-transform:uppercase; letter-spacing:.06em}
-  .acct-top .v{font-size:26px; font-weight:700; letter-spacing:-.03em; margin-top:2px; font-variant-numeric:tabular-nums}
-  .acct-top .s{font-size:13px; color:var(--ink-60)}
-  .tbl{width:100%; border-collapse:collapse; font-size:14.5px; font-variant-numeric:tabular-nums}
-  .tbl th{background:var(--muted); font-size:12.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-60); text-align:left; padding:9px 20px}
-  .tbl td{padding:13px 20px; border-top:1px solid var(--border); vertical-align:middle}
-  .tbl .name{font-weight:600}
-  .tbl .sub{font-size:13px; color:var(--ink-60)}
-  .tbl .amt{text-align:right; font-weight:600; white-space:nowrap}
-  .tbl .amt.in{color:var(--gain)} .tbl .amt.out{color:var(--ink)}
-  .tbl th.r{text-align:right}
-  .scrollx{overflow-x:auto}
-  @media (max-width:640px){.acct-top{grid-template-columns:1fr} .acct-top > div{border-left:0; border-top:1px solid var(--border)} .acct-top > div:first-child{border-top:0} .tbl .hide-sm{display:none}}
-
-  /* ---------- FILES ---------- */
-  .files{padding:20px; display:grid; gap:12px}
-  .qrow{display:flex; gap:10px}
-  .qrow .inp{flex:1; display:flex; align-items:center; gap:10px; border:1px solid var(--border-strong); border-radius:10px; padding:0 14px; height:44px; font-size:15px; background:var(--surface); box-shadow:0 0 0 4px var(--accent-soft)}
-  .qrow .inp svg{width:17px; height:17px; color:var(--ink-60)}
-  .answer{border:1px solid rgba(15,118,110,.3); background:linear-gradient(180deg,#f0f8f5,#fff 80%); border-radius:12px; padding:16px 18px}
-  .answer .dh{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--accent)}
-  .answer p{margin:8px 0 0; font-size:15px; line-height:1.6}
-  .answer ul{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:6px}
-  .answer li{display:flex; gap:10px; font-size:14.5px; color:var(--ink-80)}
-  .answer li::before{content:""; flex:none; width:6px; height:6px; margin-top:8px; border-radius:50%; background:var(--accent)}
-  .answer sup{font-family:var(--mono); font-size:10.5px; color:var(--accent); font-weight:600; margin-left:2px}
-  .frow{display:flex; align-items:center; gap:14px; padding:12px 14px; border:1px solid var(--border); border-radius:10px}
-  .ficon{width:36px; height:40px; border-radius:6px; flex:none; display:grid; place-items:end center; padding-bottom:5px; color:#fff; font-size:9.5px; font-weight:800; letter-spacing:.04em}
-  .frow .fn{font-weight:600; font-size:14.5px}
-  .frow .fm{font-size:13px; color:var(--ink-60)}
-  .frow .ref{font-family:var(--mono); font-size:11px; color:var(--accent); border:1px solid rgba(15,118,110,.3); border-radius:5px; padding:0 5px; margin-right:4px}
-  .frow .open{margin-left:auto}
-
-  /* ---------- SLIDES ---------- */
-  .slides{padding:20px}
-  .brief{display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg); font-size:14.5px; margin-bottom:16px}
-  .brief b{font-weight:600}
-  .brief .btn{margin-left:auto}
-  .tagrow{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px}
-  .sgrid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px}
-  .thumb{border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--surface); position:relative}
-  .thumb.pick{box-shadow:0 0 0 2px var(--accent)}
-  .thumb .chk{position:absolute; top:8px; right:8px; width:20px; height:20px; border-radius:50%; background:var(--accent); color:#fff; display:grid; place-items:center; font-size:12px; font-weight:800}
-  .pic{aspect-ratio:16/10; padding:10% 9%; display:flex; flex-direction:column; gap:6%; background:#fbfbf8; border-bottom:1px solid var(--border)}
-  .pic .t{height:9%; width:55%; background:var(--ink); border-radius:2px; opacity:.85}
-  .pic .t2{height:6%; width:38%; background:var(--ink); border-radius:2px; opacity:.3}
-  .pic .bars{flex:1; display:flex; align-items:flex-end; gap:7%}
-  .pic .bars i{flex:1; background:var(--accent); border-radius:2px 2px 0 0; opacity:.8}
-  .pic .lines{display:grid; gap:9%; flex:1; align-content:start; padding-top:4%}
-  .pic .lines i{height:5px; border-radius:3px; background:var(--border-strong)}
-  .pic.cover{background:linear-gradient(135deg,#0f766e,#0b4f4a); justify-content:flex-end}
-  .pic.cover .t{background:#fff; opacity:.95} .pic.cover .t2{background:#fff; opacity:.5}
-  .pic .kpis{flex:1; display:grid; grid-template-columns:1fr 1fr; gap:7%}
-  .pic .kpis i{border:1px solid var(--border-strong); border-radius:4px; position:relative}
-  .pic .kpis i::after{content:""; position:absolute; left:15%; top:30%; width:45%; height:28%; background:var(--accent); opacity:.7; border-radius:2px}
-  .thumb .cap{padding:8px 10px; font-size:13px; color:var(--ink-80); display:flex; justify-content:space-between; gap:8px}
-  .thumb .cap span{color:var(--ink-60); font-size:12px}
-  .sbar{display:flex; align-items:center; gap:12px; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); font-size:14.5px; color:var(--ink-70)}
-  .sbar b{color:var(--ink)}
-  .sbar .btn{margin-left:auto}
-  @media (max-width:820px){.sgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-
-  /* ---------- TASKS ---------- */
-  .board{display:grid; grid-template-columns:repeat(3,minmax(220px,1fr)); gap:16px; padding:18px; min-width:700px; background:var(--bg)}
-  .col h4{margin:0 0 12px; font-size:14px; font-weight:650; display:flex; align-items:center; gap:8px}
-  .col h4 .c{font-size:12px; font-weight:600; padding:0 7px; border-radius:999px; background:color-mix(in srgb, currentColor 12%, transparent)}
-  .col.over h4{color:var(--danger)} .col.today h4{color:var(--warning)} .col.week h4{color:var(--accent)}
-  .task{border:1px solid var(--border); border-radius:10px; padding:12px 13px; margin-bottom:10px; background:var(--surface); display:grid; gap:8px; box-shadow:0 1px 2px rgb(13 26 36 / .04)}
-  .task .tt{font-size:14.5px; font-weight:600}
-  .task q{display:block; font-size:13px; color:var(--ink-70); border-left:2px solid var(--accent); padding-left:9px; quotes:"“" "”"}
-  .task .from{font-size:12.5px; color:var(--ink-60)}
-  .task .foot{display:flex; align-items:center; gap:8px}
-  .task .due{font-size:12.5px; font-weight:600; font-variant-numeric:tabular-nums}
-
-  /* ---------- MORE + CLOSING ---------- */
-  .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px}
-  .tile{border:1px solid var(--border); border-radius:var(--r); background:var(--surface); box-shadow:var(--shadow-card); padding:18px; display:grid; gap:8px; align-content:start}
-  .tile .ti{width:36px; height:36px; border-radius:10px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center}
-  .tile .ti svg{width:19px; height:19px}
-  .tile b{font-size:15.5px; font-weight:650}
-  .tile p{margin:0; font-size:14.5px; color:var(--ink-70); line-height:1.5}
-  .worlds3{display:flex; gap:6px; margin-top:4px}
-  .worlds3 span{font-size:12px; font-weight:600; padding:2px 8px; border-radius:6px; border:1px solid var(--border); background:var(--bg)}
-
-  .promise{margin-top:72px; display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
-  .promise > div{border-top:2px solid var(--ink); padding-top:16px}
-  .promise h3{font-size:17px; font-weight:650; letter-spacing:-.015em}
-  .promise p{margin:6px 0 0; font-size:15px; color:var(--ink-70)}
-  @media (max-width:820px){.promise{grid-template-columns:1fr; gap:24px}}
-
-  footer.site-footer{margin-top:72px; border-top:1px solid var(--border); background:var(--surface)}
-  footer.site-footer .container{display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center; padding-top:22px; padding-bottom:28px; font-size:13.5px; color:var(--ink-60)}
-  footer.site-footer .mono{color:var(--ink-80)}
-  footer.site-footer .right{margin-left:auto}
+  /* extras + principles */
+  .extras{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:18px}
+  .extra{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
+  .extra .ti{flex:none;width:34px;height:34px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+  .extra .ti svg{width:18px;height:18px}
+  .extra b{display:block;font-size:15px;font-weight:650}
+  .extra span{display:block;font-size:14px;color:var(--ink-70);line-height:1.45;margin-top:2px}
+  .principles{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+  .principles > div{border-top:2px solid var(--ink);padding-top:16px}
+  .principles h3{font-size:18px;font-weight:650}
+  .principles p{margin:6px 0 0;font-size:15.5px;color:var(--ink-70)}
+  @media (max-width:820px){.principles{grid-template-columns:1fr;gap:22px}}
+  footer.site-footer{margin-top:88px;border-top:1px solid var(--border);background:var(--surface)}
+  footer.site-footer .container{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;padding-top:22px;padding-bottom:28px;font-size:13.5px;color:var(--ink-60)}
+  footer .mono{font-family:var(--mono);color:var(--ink-80)} footer .right{margin-left:auto}
 </style>
 </head>
 <body>
-
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <symbol id="logo" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0f766e"/><circle cx="16" cy="16" r="5" fill="#fff"/><ellipse cx="16" cy="16" rx="12" ry="5" fill="none" stroke="#fff" stroke-width="2" transform="rotate(-28 16 16)"/><circle cx="26.3" cy="10.6" r="2.2" fill="#7ee3d4"/></symbol>
-    <symbol id="i-focus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></symbol>
-    <symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
-    <symbol id="i-draft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
-    <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7z"/></symbol>
-    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
-    <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></symbol>
-    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol>
-    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
-    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
-    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
-  </defs>
-</svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="logo" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0f766e"/><circle cx="16" cy="16" r="5" fill="#fff"/><ellipse cx="16" cy="16" rx="12" ry="5" fill="none" stroke="#fff" stroke-width="2" transform="rotate(-28 16 16)"/><circle cx="26.3" cy="10.6" r="2.2" fill="#7ee3d4"/></symbol>
+  <symbol id="i-focus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-draft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2"/><path d="M8 12h8"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-broom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6M4 20l7-7M9 11l4 4-3 5H4v-6z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-sig" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17c3-6 5-6 6-3s3 3 5-1 4-4 7 0"/><path d="M3 21h18"/></symbol>
+  <symbol id="i-drive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+</defs></svg>
 
 <header class="site-header">
   <div class="container">
-    <a class="brand" href="#top" aria-label="Orbit — nach oben">
-      <svg class="mark"><use href="#logo"/></svg>
-      <b>Orbit</b>
-      <span class="ver">v0.40.0</span>
-    </a>
+    <a class="brand" href="#top" aria-label="Orbit"><svg><use href="#logo"/></svg><b>Orbit</b></a>
     <nav class="site-nav" aria-label="Abschnitte">
-      <a href="#inbox">Inbox</a>
-      <a href="#accounting">Buchhaltung</a>
-      <a href="#files">Dateien</a>
-      <a href="#slides">Folien</a>
-      <a href="#tasks">Aufgaben</a>
+      <a href="#demo">Live-Demo</a><a href="#funktionen">Funktionen</a><a href="#prinzipien">Prinzipien</a>
     </nav>
     <div class="right">
-      <nav class="lang" aria-label="Language / Sprache"><span aria-current="true">DE</span><a href="en/" hreflang="en" lang="en">EN</a></nav>
-      <span class="selfhost">Eigener Server</span>
-      <a class="btn primary sm" href="#inbox">Zur Inbox</a>
+      <nav class="lang" aria-label="Sprache / Language"><span aria-current="true">DE</span><a href="en/" hreflang="en" lang="en">EN</a></nav>
+      <a class="btn primary sm" href="#demo">Ausprobieren</a>
     </div>
   </div>
 </header>
 
 <main id="top">
   <section class="hero">
-    <div class="container">
-      <p class="kicker">Ein Posteingang für alles · KI-CRM</p>
-      <h1>Jede Nachricht an <em>einem Ort</em> — und eine KI, die die Arbeit macht.</h1>
-      <p class="lede">Sechs Kanäle landen in einem Posteingang, sortiert nach dem, was dich braucht. Orbit schreibt den Antwortentwurf, legt den Anhang ab, verbucht die Rechnung und macht aus „bis Freitag“ eine Aufgabe. Alles läuft auf deinem eigenen Server — die KI schlägt vor, du entscheidest.</p>
-      <div class="actions">
-        <a class="btn primary" href="#inbox">Inbox ansehen ↓</a>
-        <a class="btn outline" href="#more">Alle Funktionen</a>
+    <div class="container hero-text">
+      <div style="display:grid;gap:18px">
+        <p class="kicker">Ein Posteingang für alles · KI-CRM</p>
+        <h1>Jede Nachricht an <em>einem Ort</em> — und die Antwort steht schon da.</h1>
+      </div>
+      <div class="hero-side">
+        <p class="lede">Mail, Microsoft 365, Telegram, WhatsApp und Discord landen in einer Liste, sortiert nach dem, was dich braucht. Orbit schreibt den Entwurf, erkennt Rechnungen und Fristen und hält Arbeit, Geschäft und Privates getrennt. Auf deinem eigenen Server — die KI schlägt vor, du entscheidest.</p>
+        <div class="actions">
+          <a class="btn primary" href="#demo">Live-Demo ausprobieren ↓</a>
+          <a class="btn outline" href="#funktionen">Was Orbit noch kann</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container" id="demo">
+      <p class="demo-hint"><span class="live">Live-Demo</span><span>Klick dich durch: Welt wechseln, Nachricht öffnen, Antwort senden. Alles Beispieldaten, nichts verlässt die Seite.</span></p>
+      <div class="app" id="app">
+        <div class="appbar" aria-hidden="true">
+          <span class="tl"><i></i><i></i><i></i></span>
+          <span class="ab"><svg><use href="#logo"/></svg>Orbit</span>
+          <nav><span>Heute</span><span class="on">Inbox</span><span>Aufgaben</span><span>Wissen</span><span>Buchhaltung</span></nav>
+          <span class="search"><svg width="15" height="15"><use href="#i-search"/></svg>Alles durchsuchen…</span>
+        </div>
+        <div class="inbox" id="inbox">
+          <div class="rail" id="rail"></div>
+          <div class="list" id="list" role="listbox" aria-label="Nachrichten" tabindex="0"></div>
+          <div class="read" id="read" aria-live="polite"></div>
+        </div>
       </div>
 
       <div class="darkstrip" role="list" aria-label="Orbit auf einen Blick">
-        <div role="listitem"><span class="k">Kanäle</span><span class="v num">6 → 1</span><span class="s">Mail, iCloud, Telegram, WhatsApp, Discord und Teams in einer Liste.</span></div>
-        <div role="listitem"><span class="k">Von der KI gesendet</span><span class="v num">0</span><span class="s">Jede Antwort bleibt Entwurf, bis du auf Senden drückst.</span></div>
-        <div role="listitem"><span class="k">Welten</span><span class="v num">3</span><span class="s">Privat, Geschäft und Arbeit bleiben streng getrennt.</span></div>
+        <div role="listitem"><span class="k">Kanäle</span><span class="v">5 → 1</span><span class="s">Mail, Microsoft 365, Telegram, WhatsApp und Discord in einer Liste.</span></div>
+        <div role="listitem"><span class="k">Von der KI gesendet</span><span class="v">0</span><span class="s">Jede Antwort bleibt Entwurf, bis du auf Senden drückst.</span></div>
+        <div role="listitem"><span class="k">Welten</span><span class="v">3</span><span class="s">Arbeit, Geschäft und Privat bleiben streng getrennt.</span></div>
         <div role="listitem"><span class="k">Deine Daten</span><span class="v">Dein Server</span><span class="s">Keine fremde Cloud liest deine Post mit.</span></div>
       </div>
     </div>
   </section>
 
   <div class="container">
-
-    <!-- ================= INBOX ================= -->
-    <section class="view" id="inbox">
+    <section class="block" id="funktionen">
       <div class="sh">
-        <div>
-          <p class="kicker">Die Inbox</p>
-          <h2>Sortiert nach dem, was dich braucht — nicht nach Eingang.</h2>
-          <p>Mails, Chats und Team-Nachrichten stehen in einer Liste — aufgeteilt in <b>braucht Antwort</b>, <b>zur Info</b> und ein einziges Bündel für Bots und Newsletter. Öffnest du einen Verlauf, ist die Antwort schon formuliert, in deinem Ton, und wartet auf dich.</p>
+        <p class="kicker">Funktionen</p>
+        <h2>Was hinter der Inbox mitarbeitet.</h2>
+        <p>Orbit liest nicht nur, es räumt hinterher auf: Belege landen in der Buchhaltung, Fristen werden zu Aufgaben, Anfragen zu Leads.</p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Funktionen">
+        <button role="tab" id="t-books" aria-controls="p-books" aria-selected="true">Buchhaltung</button>
+        <button role="tab" id="t-know" aria-controls="p-know" aria-selected="false" tabindex="-1">Wissen &amp; Drive</button>
+        <button role="tab" id="t-tasks" aria-controls="p-tasks" aria-selected="false" tabindex="-1">Aufgaben</button>
+        <button role="tab" id="t-leads" aria-controls="p-leads" aria-selected="false" tabindex="-1">Leads</button>
+      </div>
+
+      <div class="panel" role="tabpanel" id="p-books" aria-labelledby="t-books">
+        <div><h3>Rechnungen aus der Post werden zu Buchungen.</h3><p>Orbit erkennt Rechnungen und Zahlungsbelege in Mails und Scans, summiert offene Posten je Währung und gleicht sie mit deiner Buchhaltung ab.</p><ul class="checks"><li>Belege mit einem Klick an lexoffice</li><li>Abgeglichenes hakt sich selbst ab</li><li>Steuerrelevantes landet in der Steuer-Sammlung</li></ul></div>
+        <div class="mock">
+          <div class="mh">Buchhaltung<span class="pill good">11 von 14 abgeglichen</span></div>
+          <div class="tot"><div><span>Offen · EUR</span><b>1.254,90 €</b></div><div><span>Offen · USD</span><b>39,00 $</b></div><div><span>Abgeglichen</span><b>11 / 14</b></div></div>
+          <ul class="frows">
+            <li><div class="n"><b>Anna Weber</b><span>Rechnung #2026-118 · Mail</span></div><span class="a">−1.240,00 €</span><span class="pill warn">fällig 19.11.</span></li>
+            <li><div class="n"><b>Signals Platform</b><span>Monatsabrechnung · Mail</span></div><span class="a in">+249,00 $</span><span class="pill good">Abgeglichen</span></li>
+            <li><div class="n"><b>CloudHost</b><span>Zahlungsbestätigung</span></div><span class="a">−39,00 $</span><span class="pill accent">An lexoffice →</span></li>
+            <li><div class="n"><b>Stadtwerke</b><span>Abschlag November · Scan</span></div><span class="a">−86,00 €</span><span class="pill">Steuer-Sammlung</span></li>
+          </ul>
         </div>
       </div>
 
-      <div class="app">
-        <div class="appbar">
-          <span class="tl" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="ab"><svg><use href="#logo"/></svg>Orbit</span>
-          <nav aria-hidden="true"><span class="on">Inbox</span><span>Kontakte</span><span>Dateien</span><span>Aufgaben</span><span>Buchhaltung</span></nav>
-          <span class="search" aria-hidden="true"><svg width="15" height="15"><use href="#i-search"/></svg>Alles durchsuchen<kbd>⌘K</kbd></span>
+      <div class="panel" role="tabpanel" id="p-know" aria-labelledby="t-know" hidden>
+        <div><h3>Frag deine Dokumente — Antwort mit Quellen.</h3><p>Ein paar Wörter genügen. Orbit durchsucht Drive und dein Wissen nach Name und Inhalt und antwortet in drei Zeilen, jede mit Verweis auf die Datei.</p><ul class="checks"><li>Sucht in Dateinamen und Inhalten</li><li>Fakten aus Nachrichten landen im Wissen</li><li>Privates Wissen bleibt in der Welt „Privat“</li></ul></div>
+        <div class="mock">
+          <div class="mh">Wissen &amp; Drive<span class="pill">Orbit Drive</span></div>
+          <div class="q"><svg><use href="#i-search"/></svg>Wie wird der Bonus 2026 berechnet?</div>
+          <div class="ans"><div class="dh">✦ Antwort aus 2 Dokumenten</div><ul><li><span>Drei KPIs zählen: Umsatz, Kundenbindung und Upsell-Quote.<sup>[1]</sup></span></li><li><span>Ab 80 % Zielerreichung, gedeckelt bei 120 %.<sup>[1]</sup></span></li><li><span>Quartalsweise — im Q2 waren es 104 %.<sup>[2]</sup></span></li></ul></div>
+          <div class="srcf"><span class="ic" style="background:#c2410c">PPTX</span><div><b><span class="ref">1</span>Bonusmodell 2026 – Konzept.pptx</b><span>Drive · vor 3 Tagen geändert</span></div></div>
+          <div class="srcf"><span class="ic" style="background:#15803d">XLSX</span><div><b><span class="ref">2</span>KPI-Bericht Q2 2026.xlsx</b><span>Drive · vor 6 Tagen geändert</span></div></div>
         </div>
+      </div>
 
-        <div class="inbox">
-          <!-- left rail -->
-          <div class="rail">
-            <span class="n on-mock" style="top:12px; right:-11px">1</span>
-            <div class="worlds" aria-label="Welt"><span class="on">Arbeit</span><span>Geschäft</span><span>Privat</span></div>
-            <span class="lbl">Ansichten</span>
-            <div class="it on"><svg><use href="#i-focus"/></svg>Focus <span class="c">5</span></div>
-            <div class="it"><svg><use href="#i-inbox"/></svg>Alles <span class="c">124</span></div>
-            <div class="it"><svg><use href="#i-clock"/></svg>Wartet auf andere <span class="c">7</span></div>
-            <div class="it"><svg><use href="#i-draft"/></svg>Entwürfe <span class="c">3</span></div>
-            <div class="it"><svg><use href="#i-check"/></svg>Erledigt</div>
-            <span class="lbl ch">Kanäle</span>
-            <div class="it ch"><i style="background:var(--ch-mail)"></i>Mail <span class="c">38</span></div>
-            <div class="it ch"><i style="background:var(--ch-tg)"></i>Telegram <span class="c">12</span></div>
-            <div class="it ch"><i style="background:var(--ch-wa)"></i>WhatsApp <span class="c">18</span></div>
-            <div class="it ch"><i style="background:var(--ch-dc)"></i>Discord <span class="c">4</span></div>
-            <div class="it ch"><i style="background:var(--ch-team)"></i>Team <span class="c">22</span></div>
-          </div>
-
-          <!-- thread list -->
-          <div class="list">
-            <span class="n on-mock" style="top:154px; right:-11px">2</span>
-            <div class="listhead">
-              <h3>Focus</h3><span class="sub">3 brauchen dich · 2 zur Info</span>
-              <span class="seg" aria-hidden="true"><span class="on">Wichtig</span><span>Neueste</span></span>
-            </div>
-
-            <div class="grp">Braucht deine Antwort <span class="cnt">3</span></div>
-            <div class="row unread sel">
-              <span class="av" style="background:#dbeafe">MB<span class="src" style="background:var(--ch-tg)">T</span></span>
-              <div>
-                <div class="r1"><span class="who">Michael Berg</span><span class="time">09:41</span></div>
-                <div class="subj">Re: Partnerschaftsangebot</div>
-                <div class="prev">Das Team ist dabei — telefonieren wir nächste Woche?</div>
-                <div class="tags"><span class="pill accent">Entwurf bereit</span></div>
-              </div>
-            </div>
-            <div class="row unread">
-              <span class="av" style="background:#fde2d4">SK<span class="src" style="background:var(--ch-mail)">@</span></span>
-              <div>
-                <div class="r1"><span class="who">Sarah Klein</span><span class="time">08:55</span></div>
-                <div class="subj">Q2-Bericht zur Durchsicht</div>
-                <div class="prev">Kannst du vor Freitag drüberschauen? Zahlen hängen an.</div>
-                <div class="tags"><span class="pill warn">Fällig Fr 7. Nov.</span></div>
-              </div>
-            </div>
-            <div class="row unread">
-              <span class="av" style="background:#dcfce7">JL<span class="src" style="background:var(--ch-wa)">W</span></span>
-              <div>
-                <div class="r1"><span class="who">Julia Lenz</span><span class="time">Gestern</span></div>
-                <div class="subj">Vertragsentwurf — zwei Fragen</div>
-                <div class="prev">Ziffer 4 und die Kündigungsfrist, siehe meine Notizen.</div>
-                <div class="tags"><span class="pill accent">Entwurf bereit</span></div>
-              </div>
-            </div>
-
-            <div class="grp">Zur Info <span class="cnt">2</span></div>
-            <div class="row">
-              <span class="av" style="background:#ede9fe">AW<span class="src" style="background:var(--ch-mail)">@</span></span>
-              <div>
-                <div class="r1"><span class="who">Anna Weber</span><span class="time">Gestern</span></div>
-                <div class="subj">Rechnung #2026-118 · 1.240,00 €</div>
-                <div class="prev ok">✓ In die Buchhaltung übernommen · zahlbar in 14 Tagen</div>
-              </div>
-            </div>
-            <div class="row">
-              <span class="av" style="background:#e1f1ed">TN<span class="src" style="background:var(--ch-team)">M</span></span>
-              <div>
-                <div class="r1"><span class="who">Team Nord</span><span class="time">Mo</span></div>
-                <div class="subj">Wartungsfenster Donnerstag 9–13 Uhr</div>
-                <div class="prev ok">✓ Im Kalender eingetragen · Systeme nur lesbar</div>
-              </div>
-            </div>
-
-            <div class="bundle">
-              <span class="stack" aria-hidden="true"><span style="background:var(--ch-tg)">T</span><span style="background:var(--ch-mail)">@</span><span style="background:var(--ch-dc)">D</span></span>
-              <span><b>14 Meldungen</b> von Bots &amp; Newslettern</span>
-              <span class="go">Bündel öffnen →</span>
-            </div>
-          </div>
-
-          <!-- reading pane -->
-          <div class="read">
-            <div class="rhead">
-              <h3>Re: Partnerschaftsangebot</h3>
-              <div class="rmeta">
-                <span class="pill dot" style="--dot:var(--ch-tg)">Telegram</span>
-                <span class="pill">Arbeit</span>
-                <span class="sum">Möchte nächste Woche telefonieren, um den Pilotumfang festzulegen.</span>
-              </div>
-            </div>
-            <div class="ctx">
-              <div class="cg">
-                <div><span>Berg &amp; Partner · seit</span><b>März 2025 · 23 Verläufe</b></div>
-                <div><span>Offener Deal</span><b>Pilot · 18.000 €</b></div>
-                <div><span>Offene Aufgabe</span><b>NDA unterschreiben (überfällig)</b></div>
-              </div>
-            </div>
-            <div class="rbody">
-              <div class="earlier"><span class="av" style="background:#e1f1ed;color:var(--accent)">Du</span><span><b>Du</b> · 3. Nov. — „Anbei die Präsentation zum Piloten, ich gehe sie gern mit euch durch.“</span><span class="more3">+ 2 frühere</span></div>
-              <div class="msg">
-                <span class="av" style="background:#dbeafe">MB</span>
-                <div>
-                  <div class="mh"><b>Michael Berg</b><span>09:41</span></div>
-                  <p>Danke für die Präsentation — das Team ist dabei. Lass uns nächste Woche telefonieren und den Pilotumfang festlegen. Dienstag oder Mittwoch nachmittags passt uns.</p>
-                </div>
-              </div>
-              <div class="found">
-                <span>Orbit hat erkannt</span>
-                <span class="pill">Di oder Mi, nachmittags</span>
-                <span class="pill">Du bist Mi 14–16 Uhr frei</span>
-              </div>
-              <div class="draft">
-                <span class="n on-mock" style="top:-11px; left:-11px">3</span>
-                <div class="dh"><svg><use href="#i-spark"/></svg>Antwortvorschlag<span class="tone">Dein Ton · Deutsch</span></div>
-                <p>Hallo Michael, super Neuigkeiten — danke! Mittwoch, 12. November, um 14 Uhr passt bei uns. Ich schicke dir gleich eine Einladung mit kurzer Agenda zum Pilotumfang. Bis bald!</p>
-                <div class="dactions">
-                  <span class="tbtn send">Senden <kbd>⌘↵</kbd></span>
-                  <span class="tbtn">Bearbeiten</span>
-                  <span class="tbtn">Umformulieren</span>
-                  <span class="tbtn">Übersetzen</span>
-                  <span class="note">Nichts geht ohne dich raus.</span>
-                </div>
-              </div>
-            </div>
+      <div class="panel" role="tabpanel" id="p-tasks" aria-labelledby="t-tasks" hidden>
+        <div><h3>Aus „bis Dienstag“ wird eine Aufgabe mit Datum.</h3><p>Nennt eine Nachricht eine Frist, legt Orbit die Aufgabe an und zitiert den Satz, aus dem sie stammt — du siehst sofort, warum sie da ist.</p><ul class="checks"><li>Fristen aus Mails, Chats und Scans</li><li>Überfällig · Heute · Diese Woche</li><li>Mit einem Klick zurück zur Nachricht</li></ul></div>
+        <div class="mock">
+          <div class="mh">Aufgaben<span class="pill">Heute, Do 5. Nov.</span></div>
+          <div class="tasks">
+            <div class="task"><div class="tt">NDA für Berg &amp; Partner unterschreiben<span class="pill bad">Überfällig</span></div><q>Bitte bis Dienstag unterschrieben zurück.</q><div class="from">Michael Berg · Telegram · <span class="pill accent">KI-Frist</span></div></div>
+            <div class="task"><div class="tt">Q2-Bericht durchsehen<span class="pill warn">Fr 7. Nov.</span></div><q>Kannst du vor Freitag drüberschauen?</q><div class="from">Sarah Klein · Mail · <span class="pill accent">KI-Frist</span></div></div>
+            <div class="task"><div class="tt">Abschlag Stadtwerke prüfen<span class="pill">Mo 10. Nov.</span></div><q>Fällig am 10.11.2026.</q><div class="from">Scan-Eingang · stadtwerke_11-2026.pdf</div></div>
           </div>
         </div>
       </div>
 
-      <div class="legend">
-        <div><span class="n">1</span><span><b>Ansichten statt Ordner.</b> „Focus“ zeigt nur, was für dich zählt — über alle Kanäle hinweg und innerhalb der gewählten Welt.</span></div>
-        <div><span class="n">2</span><span><b>Jede Zeile sagt, was als Nächstes kommt.</b> Entwurf bereit, Fälligkeit, schon verbucht — du siehst den Stand, ohne die Nachricht zu öffnen.</span></div>
-        <div><span class="n">3</span><span><b>Die Antwort ist schon geschrieben.</b> Orbit prüft deinen Kalender, formuliert in deinem Ton und wartet. Du bearbeitest, formulierst um, übersetzt — oder drückst einfach auf Senden.</span></div>
+      <div class="panel" role="tabpanel" id="p-leads" aria-labelledby="t-leads" hidden>
+        <div><h3>Anfragen werden zu Leads — mit Pipeline.</h3><p>Orbit erkennt Interessenten in allen Kanälen, ordnet sie einer Stufe zu und schreibt die Einladung in ihrer Sprache vor.</p><ul class="checks"><li>Stufen von „Neu“ bis „Partner“</li><li>Antwort in der Sprache des Leads</li><li>Nichts geht raus, bevor du freigibst</li></ul></div>
+        <div class="mock">
+          <div class="mh">Leads<span class="pill">30 Leads</span></div>
+          <div class="stages">
+            <span class="on" style="--c:#8a5a00">Neu <i>4</i></span><span style="--c:#0b5f58">Angeschrieben <i>9</i></span><span style="--c:#0f766e">Im Gespräch <i>3</i></span><span style="--c:#0f7a3a">Kunde <i>12</i></span><span style="--c:#7c3aed">Partner <i>2</i></span>
+          </div>
+          <div class="lead">
+            <div class="tt">Carlos Mendes<span class="pill warn">Neu</span></div>
+            <p>„Hola, I saw your EA on MQL5 — is there a trial version?“ · Telegram, vor 3 Tagen</p>
+            <div class="inv"><small>Einladung · Englisch · Entwurf</small>Hi Carlos, thanks for reaching out! Yes — there is a free 14-day trial. Here is how to get started…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="extras">
+        <div class="extra"><span class="ti"><svg><use href="#i-scan"/></svg></span><div><b>Scan-Eingang</b><span>Papierpost scannen — Orbit benennt, sortiert und liest Fristen aus.</span></div></div>
+        <div class="extra"><span class="ti"><svg><use href="#i-bolt"/></svg></span><div><b>Regeln</b><span>„Immer archivieren“ oder „immer wichtig“ — einmal festlegen, gilt ab dann.</span></div></div>
+        <div class="extra"><span class="ti"><svg><use href="#i-broom"/></svg></span><div><b>Aufräumen</b><span>Die KI schlägt für alte Mails Ordner vor; du bestätigst im Stapel.</span></div></div>
+        <div class="extra"><span class="ti"><svg><use href="#i-sig"/></svg></span><div><b>Vorlagen &amp; Signaturen</b><span>Je Konto die passende Signatur, häufige Antworten als Vorlage.</span></div></div>
       </div>
     </section>
 
-    <!-- ================= ACCOUNTING ================= -->
-    <section class="view" id="accounting">
-      <div class="sh">
-        <div>
-          <p class="kicker">Buchhaltung</p>
-          <h2>Rechnungen aus der Post werden zu Buchungen — und haken sich selbst ab.</h2>
-          <p>Orbit erkennt Rechnungen und Zahlungsbelege, summiert <b>offene Posten je Währung</b> und markiert sie als abgeglichen, sobald sie zu einer Buchung passen. Ein Klick schickt den Beleg an die Steuerberatung.</p>
-        </div>
-      </div>
-      <div class="app">
-        <div class="appbar">
-          <span class="tl" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="ab"><svg><use href="#logo"/></svg>Orbit</span>
-          <nav aria-hidden="true"><span>Inbox</span><span>Dateien</span><span>Aufgaben</span><span class="on">Buchhaltung</span></nav>
-        </div>
-        <div class="acct-top">
-          <div><div class="k">Offen · EUR</div><div class="v">1.254,90 €</div><div class="s">2 Rechnungen, nächste fällig 19. Nov.</div></div>
-          <div><div class="k">Offen · USD</div><div class="v">39,00 $</div><div class="s">1 Rechnung</div></div>
-          <div><div class="k">Abgeglichen diesen Monat</div><div class="v">11 <span style="font-size:15px;color:var(--ink-60);font-weight:500">von 14</span></div><div class="s">automatisch zugeordnet</div></div>
-        </div>
-        <div class="scrollx">
-          <table class="tbl">
-            <thead><tr><th>Posten</th><th class="hide-sm">Gefunden in</th><th class="r">Betrag</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td><div class="name">Anna Weber</div><div class="sub">Rechnung #2026-118 · Oktober</div></td><td class="hide-sm sub">Arbeits-Mail · gestern</td><td class="amt out">−1.240,00 €</td><td><span class="pill warn">Offen · fällig 19. Nov.</span></td></tr>
-              <tr><td><div class="name">Signals Platform</div><div class="sub">Monatsabrechnung · Oktober</div></td><td class="hide-sm sub">Arbeits-Mail · 3. Nov.</td><td class="amt in">+249,00 $</td><td><span class="pill good">Abgeglichen</span></td></tr>
-              <tr><td><div class="name">CloudHost</div><div class="sub">Zahlungsbestätigung</div></td><td class="hide-sm sub">Private Mail · 2. Nov.</td><td class="amt out">−39,00 $</td><td><span class="pill">An Steuerberatung →</span></td></tr>
-              <tr><td><div class="name">ServerHost</div><div class="sub">Rechnung Nr. 100482</div></td><td class="hide-sm sub">Arbeits-Mail · 1. Nov.</td><td class="amt out">−14,90 €</td><td><span class="pill warn">Offen · fällig 15. Nov.</span></td></tr>
-            </tbody>
-          </table>
-        </div>
+    <section class="block" id="prinzipien">
+      <div class="sh"><p class="kicker">Prinzipien</p><h2>Gebaut für Ruhe, nicht für mehr Klicks.</h2></div>
+      <div class="principles">
+        <div><h3>Privat aus Prinzip</h3><p>Läuft auf deinem eigenen Server. Mails, Dateien und Kontakte verlassen ihn nie.</p></div>
+        <div><h3>Die KI schlägt vor, du entscheidest</h3><p>Antworten, Weiterleitungen und Buchungen sind Entwürfe — Orbit bereitet vor, du gibst frei.</p></div>
+        <div><h3>Getrennte Welten</h3><p>Arbeit, Geschäft und Privat sehen einander nicht — nicht in der Suche, nicht in KI-Entwürfen.</p></div>
       </div>
     </section>
-
-    <!-- ================= FILES ================= -->
-    <section class="view" id="files">
-      <div class="sh">
-        <div>
-          <p class="kicker">Dateien &amp; Wissen</p>
-          <h2>Stell deinem Firmenlaufwerk eine Frage — und bekomm die Antwort, mit Quellen.</h2>
-          <p>Ein paar Wörter genügen. Orbit durchsucht SharePoint nach <b>Name und Inhalt</b>, liest die passenden Dokumente und antwortet in drei Zeilen — jeder Punkt verweist auf die Datei, aus der er stammt.</p>
-        </div>
-      </div>
-      <div class="app">
-        <div class="appbar">
-          <span class="tl" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="ab"><svg><use href="#logo"/></svg>Orbit</span>
-          <nav aria-hidden="true"><span>Inbox</span><span class="on">Dateien</span><span>Aufgaben</span><span>Buchhaltung</span></nav>
-        </div>
-        <div class="files">
-          <div class="qrow">
-            <div class="inp"><svg><use href="#i-search"/></svg>Wie wird der Bonus 2026 berechnet?</div>
-          </div>
-          <div class="answer">
-            <div class="dh"><svg width="15" height="15"><use href="#i-spark"/></svg>Antwort aus 2 Dokumenten</div>
-            <ul>
-              <li><span>Die Auszahlung hängt an drei KPIs: Umsatz, Kundenbindung und Upsell-Quote.<sup>[1]</sup></span></li>
-              <li><span>Sie beginnt bei 80 % Zielerreichung und ist bei 120 % gedeckelt.<sup>[1]</sup></span></li>
-              <li><span>Ausgezahlt wird quartalsweise — im Q2 lag die Zielerreichung bei 104 %.<sup>[2]</sup></span></li>
-            </ul>
-          </div>
-          <div class="frow"><span class="ficon" style="background:#c2410c">PPTX</span><div><div class="fn"><span class="ref">1</span>Bonusmodell 2026 – Konzept.pptx</div><div class="fm">Teamseite · vor 3 Tagen geändert · 4,2 MB</div></div><span class="btn outline sm open">Öffnen</span></div>
-          <div class="frow"><span class="ficon" style="background:#15803d">XLSX</span><div><div class="fn"><span class="ref">2</span>KPI-Bericht Q2 2026.xlsx</div><div class="fm">Teamseite · vor 6 Tagen geändert · 88 KB</div></div><span class="btn outline sm open">Öffnen</span></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= SLIDES ================= -->
-    <section class="view" id="slides">
-      <div class="sh">
-        <div>
-          <p class="kicker">Folienbibliothek</p>
-          <h2>Jede Folie, die du je gebaut hast — verschlagwortet und wiederverwendbar.</h2>
-          <p>Alte Präsentationen hineinziehen; Orbit zerlegt sie und <b>verschlagwortet jede Folie</b>. Beschreib die neue Präsentation in einem Satz, Orbit sucht die Folien aus — und exportiert eine echte, bearbeitbare <b>.pptx</b>.</p>
-        </div>
-      </div>
-      <div class="app">
-        <div class="appbar">
-          <span class="tl" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="ab"><svg><use href="#logo"/></svg>Orbit</span>
-          <nav aria-hidden="true"><span>Inbox</span><span>Dateien</span><span class="on">Folien</span><span>Aufgaben</span></nav>
-        </div>
-        <div class="slides">
-          <div class="brief"><svg width="17" height="17" style="color:var(--accent);flex:none"><use href="#i-spark"/></svg><span><b>Auftrag:</b> „Q2-Ergebnisse für den Vorstand, 10 Minuten“</span><span class="btn accent sm">Zusammenstellen</span></div>
-          <div class="tagrow">
-            <span class="pill accent">Alle · 36</span><span class="pill">Umsatz</span><span class="pill">Marktanteil</span><span class="pill">Ergebnisse</span><span class="pill">Agenda</span><span class="pill">Diagramm</span><span class="pill">Prognose 2026</span>
-          </div>
-          <div class="sgrid">
-            <div class="thumb pick"><span class="chk">✓</span><div class="pic cover"><i class="t"></i><i class="t2"></i></div><div class="cap">Q2-Rückblick · Titel<span>Titel</span></div></div>
-            <div class="thumb pick"><span class="chk">✓</span><div class="pic"><i class="t"></i><div class="lines"><i style="width:80%"></i><i style="width:65%"></i><i style="width:72%"></i><i style="width:50%"></i></div></div><div class="cap">Agenda<span>Agenda</span></div></div>
-            <div class="thumb pick"><span class="chk">✓</span><div class="pic"><i class="t"></i><i class="t2"></i><div class="bars"><i style="height:45%"></i><i style="height:70%"></i><i style="height:58%"></i><i style="height:92%"></i></div></div><div class="cap">Umsatz nach Region<span>Diagramm</span></div></div>
-            <div class="thumb"><div class="pic"><i class="t"></i><div class="kpis"><i></i><i></i><i></i><i></i></div></div><div class="cap">Ergebnisse · KPIs<span>Ergebnisse</span></div></div>
-          </div>
-          <div class="sbar"><span><b>3 Folien</b> im Korb · etwa 4 Minuten</span><span class="btn primary sm">Als .pptx exportieren</span></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= TASKS ================= -->
-    <section class="view" id="tasks">
-      <div class="sh">
-        <div>
-          <p class="kicker">Aufgaben</p>
-          <h2>Aus „bis nächsten Mittwoch“ wird eine Aufgabe mit Datum — samt dem Satz, aus dem sie stammt.</h2>
-          <p>Nennt eine Nachricht eine Frist, legt Orbit die Aufgabe an und zitiert den auslösenden Satz — so siehst du, <b>warum</b> sie da ist. Die Marke <b>KI-Frist</b> kennzeichnet alles, was Orbit selbst angelegt hat.</p>
-        </div>
-      </div>
-      <div class="app">
-        <div class="appbar">
-          <span class="tl" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="ab"><svg><use href="#logo"/></svg>Orbit</span>
-          <nav aria-hidden="true"><span>Inbox</span><span>Dateien</span><span class="on">Aufgaben</span><span>Buchhaltung</span></nav>
-        </div>
-        <div class="scrollx"><div class="board">
-          <div class="col over">
-            <h4>Überfällig <span class="c">2</span></h4>
-            <div class="task"><div class="tt">Lieferantenrechnung bezahlen</div><q>Zahlbar bis 3. November.</q><div class="from">Aus Scan 2026-10-20_rechnung.pdf</div><div class="foot"><span class="due">Mo 3. Nov.</span><span class="pill accent">KI-Frist</span></div></div>
-            <div class="task"><div class="tt">NDA für Berg &amp; Partner unterschreiben</div><q>Bitte bis Dienstag unterschrieben zurück.</q><div class="from">Michael Berg · Telegram</div><div class="foot"><span class="due">Di 4. Nov.</span><span class="pill accent">KI-Frist</span></div></div>
-          </div>
-          <div class="col today">
-            <h4>Heute <span class="c">2</span></h4>
-            <div class="task"><div class="tt">Teams-Call · Team Nord</div><q>Microsoft-Teams-Besprechung, 15:00 Uhr.</q><div class="from">Team Nord · M365</div><div class="foot"><span class="due">Mi 5. Nov.</span><span class="pill accent">KI-Frist</span></div></div>
-            <div class="task"><div class="tt">Fall R2-4471 eskalieren</div><q>…offen, eskaliert, überfällig.</q><div class="from">BillingApp · Mail</div><div class="foot"><span class="due">Mi 5. Nov.</span></div></div>
-          </div>
-          <div class="col week">
-            <h4>Diese Woche <span class="c">2</span></h4>
-            <div class="task"><div class="tt">Q2-Bericht durchsehen</div><q>Kannst du vor Freitag drüberschauen?</q><div class="from">Sarah Klein · Mail</div><div class="foot"><span class="due">Fr 7. Nov.</span><span class="pill accent">KI-Frist</span></div></div>
-            <div class="task"><div class="tt">Partner-Call · Pilotumfang</div><q>Dienstag oder Mittwoch nachmittags.</q><div class="from">Michael Berg · Telegram</div><div class="foot"><span class="due">Mi 12. Nov.</span><span class="pill accent">KI-Frist</span></div></div>
-          </div>
-        </div></div>
-      </div>
-    </section>
-
-    <!-- ================= MORE ================= -->
-    <section class="view" id="more">
-      <div class="sh">
-        <div>
-          <p class="kicker">Und außerdem</p>
-          <h2>Der Rest des Arbeitstags — direkt neben deinen Nachrichten.</h2>
-        </div>
-      </div>
-      <div class="tiles">
-        <div class="tile"><span class="ti"><svg><use href="#i-cal"/></svg></span><b>Kalender</b><p>Heute und als Nächstes, neben der Mail, aus der der Termin stammt. Entwürfe prüfen ihn, bevor sie eine Uhrzeit vorschlagen.</p></div>
-        <div class="tile"><span class="ti"><svg><use href="#i-user"/></svg></span><b>Kontakte &amp; CRM</b><p>Jeder Absender wird zum Kontakt — mit Firma, kompletter Historie über alle Kanäle und offenen Posten.</p></div>
-        <div class="tile"><span class="ti"><svg><use href="#i-book"/></svg></span><b>Wissensdatenbank</b><p>Fakten aus deinen Nachrichten, durchsuchbar und mit der Quelle verknüpft.</p></div>
-        <div class="tile"><span class="ti"><svg><use href="#i-eye"/></svg></span><b>Aufgeräumte Mail-Vorschau</b><p>Lesen und antworten in der geteilten Ansicht — ohne Tracking-Pixel und Signatur-Ballast.</p></div>
-        <div class="tile"><span class="ti"><svg><use href="#i-lock"/></svg></span><b>Drei getrennte Welten</b><p>Nichts aus einer Welt taucht je in einer anderen auf — nicht in der Suche, nicht in KI-Entwürfen.</p><div class="worlds3"><span>Privat</span><span>Geschäft</span><span>Arbeit</span></div></div>
-      </div>
-    </section>
-
-    <div class="promise">
-      <div><h3>Privat aus Prinzip</h3><p>Läuft auf deinem eigenen Server. Mails, Dateien und Kontakte verlassen ihn nie.</p></div>
-      <div><h3>Die KI schlägt vor, du entscheidest</h3><p>Antworten, Weiterleitungen und Buchungen sind Entwürfe. Orbit bereitet vor, du gibst frei.</p></div>
-      <div><h3>Ein Cockpit, viele Aufgaben</h3><p>Nachrichten, CRM, Buchhaltung, Dateien, Folien und Aufgaben — das Werkzeug eines Arbeitstags, an einem Ort.</p></div>
-    </div>
   </div>
 </main>
 
 <footer class="site-footer" data-author="Pitt Petruschke (PiP)" data-app="Orbit">
-  <div class="container">
-    <span class="mono">Orbit v0.40.0</span>
-    <span>Ein Posteingang für alles &amp; KI-CRM</span>
-    <span class="right">© Pitt Petruschke — Ansichten mit Beispieldaten</span>
-  </div>
+  <div class="container"><span class="mono">Orbit v0.80</span><span>Ein Posteingang für alles · KI-CRM</span><span class="right">© Pitt Petruschke — Ansichten mit Beispieldaten</span></div>
 </footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const D = {"ui": {"world": "Welt", "viewsLbl": "Ansichten", "channels": "Kanäle", "views": {"focus": "Focus", "all": "Alle", "waiting": "Wartet auf andere", "drafts": "Entwürfe", "done": "Erledigt"}, "count": "{n} Verläufe", "count1": "1 Verlauf", "gReply": "Braucht deine Antwort", "gFyi": "Zur Info", "bundle": "<b>{n} Meldungen<\/b> von Bots & Newslettern", "bundleOpen": "Bündel öffnen →", "bundleClose": "Zuklappen", "zeroH": "Inbox Zero in dieser Welt.", "zeroP": "Alles beantwortet — schau unter „Erledigt“ nach.", "emptyH": "Nichts hier.", "emptyP": "In dieser Ansicht liegt gerade nichts.", "pickH": "Wähle eine Nachricht.", "pickP": "Links auf einen Verlauf klicken.", "me": "Du", "meIni": "Du", "translated": "Übersetzt · Deutsch", "noticed": "Orbit hat erkannt", "suggested": "Antwortvorschlag", "tone": "Dein Ton · Deutsch", "send": "Senden", "rewrite": "Umformulieren", "translate": "Übersetzen", "original": "Original zeigen", "nothing": "Nichts geht ohne dich raus.", "markDone": "Erledigt", "doneH": "Erledigt", "doneP": "Liegt jetzt unter „Erledigt“. In der echten App ginge die Antwort jetzt raus.", "back": "Zurück", "toastSent": "Demo: Antwort an {who} „gesendet“ — in echt erst nach deinem Klick.", "toastDone": "Als erledigt markiert.", "toastRewrite": "Neue Formulierung vorgeschlagen."}, "worlds": [["work", "Arbeit"], ["business", "Geschäft"], ["private", "Privat"]], "threads": [{"id": "berg", "world": "business", "group": "reply", "ch": "tg", "who": "Michael Berg", "ini": "MB", "bg": "#dbeafe", "unread": true, "time": "09:41", "subj": "Re: Partnerschaftsangebot", "prev": "Das Team ist dabei — telefonieren wir nächste Woche?", "tags": [["accent", "Entwurf bereit"]], "sum": "Möchte nächste Woche telefonieren, um den Pilotumfang festzulegen.", "facts": [["Berg & Partner · seit", "März 2025 · 23 Verläufe"], ["Offener Deal", "Pilot · 18.000 €"], ["Offene Aufgabe", "NDA unterschreiben"]], "msgs": [{"me": true, "time": "3. Nov.", "text": "Anbei die Präsentation zum Piloten — ich gehe sie gern mit euch durch."}, {"time": "09:41", "text": "Danke für die Präsentation — das Team ist dabei. Lass uns nächste Woche telefonieren und den Pilotumfang festlegen. Dienstag oder Mittwoch nachmittags passt uns."}], "found": ["Terminwunsch: Di oder Mi, nachmittags", "Offene Aufgabe: NDA"], "drafts": ["Hallo Michael, super Neuigkeiten — danke! Mittwoch, 12. November, um 14 Uhr passt bei uns. Ich schicke dir gleich eine Einladung mit kurzer Agenda zum Pilotumfang. Das NDA kommt heute unterschrieben zurück.", "Hi Michael, freut mich sehr! Wie wäre Mittwoch, der 12.11., 14 Uhr? Agenda und unterschriebenes NDA bekommst du vorab von mir. Viele Grüße"]}, {"id": "mendes", "world": "business", "group": "reply", "ch": "tg", "who": "Carlos Mendes", "ini": "CM", "bg": "#f3ead7", "unread": true, "time": "Mo", "subj": "Interesse an eurem EA", "prev": "Hola, I saw your EA on MQL5 — is there a trial version?", "tags": [["warn", "Lead · Neu"], ["accent", "Entwurf bereit"]], "sum": "Neuer Interessent aus Spanien fragt nach einer Testversion.", "facts": [["Lead-Stufe", "Neu"], ["Sprache", "Englisch / Spanisch"], ["Quelle", "MQL5-Profil"]], "msgs": [{"time": "Mo, 18:20", "text": "Hola, I saw your EA on MQL5 — is there a trial version? I trade mostly EURUSD on a small account."}], "trans": "Hallo, ich habe euren EA auf MQL5 gesehen — gibt es eine Testversion? Ich handle meist EURUSD auf einem kleinen Konto.", "found": ["Lead erkannt", "Sprache: Englisch"], "tone": "Dein Ton · Englisch", "drafts": ["Hi Carlos, thanks for reaching out! Yes — there is a free 14-day trial, and it runs fine on small EURUSD accounts. I will send you the link and a short setup guide.", "Hola Carlos! Great to hear from you. You can test the EA free for 14 days — small accounts are no problem. Want me to send the setup guide?"]}, {"id": "weber", "world": "business", "group": "fyi", "ch": "mail", "who": "Anna Weber", "ini": "AW", "bg": "#ede9fe", "unread": false, "time": "Gestern", "subj": "Rechnung #2026-118 · 1.240,00 €", "ok": "In die Buchhaltung übernommen · fällig 19.11.", "sum": "Rechnung für Oktober, zahlbar in 14 Tagen.", "facts": [["Betrag", "1.240,00 €"], ["Fällig", "19.11.2026"], ["Status", "Offen · an lexoffice"]], "msgs": [{"time": "Gestern, 16:02", "text": "Hallo, anbei die Rechnung für die Leistungen im Oktober. Zahlbar innerhalb von 14 Tagen. Viele Grüße, Anna Weber"}], "found": ["Rechnung erkannt", "1.240,00 €", "Beleg an lexoffice"]}, {"id": "lenz", "world": "business", "group": "wait", "ch": "wa", "who": "Julia Lenz", "ini": "JL", "bg": "#dcfce7", "unread": false, "waiting": true, "time": "Di", "subj": "Vertragsentwurf — zwei Fragen", "prev": "Du: Ziffer 4 habe ich angepasst, siehe Anhang.", "tags": [["", "Wartet seit 2 Tagen"]], "sum": "Du hast geantwortet — Julia meldet sich noch zur Kündigungsfrist.", "msgs": [{"time": "Mo", "text": "Zwei Fragen zum Entwurf: Ziffer 4 und die Kündigungsfrist."}, {"me": true, "time": "Di", "text": "Ziffer 4 habe ich angepasst, siehe Anhang. Zur Kündigungsfrist: drei Monate zum Quartalsende?"}], "found": ["Erinnerung: Fr, falls keine Antwort"]}, {"id": "news1", "world": "business", "group": "bot", "ch": "mail", "who": "Fintech Weekly", "ini": "FW", "bg": "#e7e9e4", "time": "Mi", "subj": "Die Woche in 5 Minuten", "prev": ""}, {"id": "bot1", "world": "business", "group": "bot", "ch": "tg", "who": "Signals Bot", "ini": "SB", "bg": "#e7e9e4", "time": "08:00", "subj": "Portfolio-Update #4471 · Drawdown 3,2 %", "prev": ""}, {"id": "bot2", "world": "business", "group": "bot", "ch": "dc", "who": "Devs #releases", "ini": "DV", "bg": "#e7e9e4", "time": "Mo", "subj": "Release 2.4 ist raus", "prev": ""}, {"id": "klein", "world": "work", "group": "reply", "ch": "m365", "who": "Sarah Klein", "ini": "SK", "bg": "#fde2d4", "unread": true, "time": "08:55", "subj": "Q2-Bericht zur Durchsicht", "prev": "Kannst du vor Freitag drüberschauen? Zahlen hängen an.", "tags": [["warn", "Fällig Fr 7. Nov."], ["accent", "Entwurf bereit"]], "sum": "Bittet um Durchsicht des Q2-Berichts bis Freitag.", "facts": [["Abteilung", "Controlling"], ["Anhang", "Q2-Bericht.xlsx"], ["Aufgabe", "Bis Fr 7. Nov."]], "msgs": [{"time": "08:55", "text": "Hallo, der Q2-Bericht ist fertig. Kannst du vor Freitag drüberschauen? Die Zahlen hängen an."}], "found": ["Frist: Freitag", "Aufgabe angelegt"], "drafts": ["Hallo Sarah, danke dir! Ich schaue mir den Bericht bis Donnerstag an und melde mich mit Anmerkungen.", "Hi Sarah, mache ich — du bekommst meine Rückmeldung spätestens Donnerstagabend."]}, {"id": "nord", "world": "work", "group": "fyi", "ch": "m365", "who": "Team Nord", "ini": "TN", "bg": "#e1f1ed", "unread": true, "time": "Mo", "subj": "Wartungsfenster Donnerstag 9–13 Uhr", "ok": "Aufgabe angelegt · Systeme nur lesbar", "sum": "Am Donnerstag sind die Systeme von 9 bis 13 Uhr nur lesbar.", "msgs": [{"time": "Mo, 11:30", "text": "Hinweis: Am Donnerstag zwischen 9 und 13 Uhr sind alle Systeme nur lesbar. Bitte keine Buchungen in diesem Zeitraum."}], "found": ["Zeitraum: Do 9–13 Uhr", "Aufgabe angelegt"]}, {"id": "hr", "world": "work", "group": "wait", "ch": "m365", "who": "Personalabteilung", "ini": "HR", "bg": "#fde2e7", "unread": false, "waiting": true, "time": "Fr", "subj": "Urlaubsantrag Dezember", "prev": "Du: Antrag für 22.–31.12. ist eingereicht.", "tags": [["", "Wartet seit 6 Tagen"]], "sum": "Dein Antrag liegt zur Freigabe vor.", "msgs": [{"me": true, "time": "Fr", "text": "Mein Urlaubsantrag für den 22.–31.12. ist eingereicht — kurze Bestätigung wäre super."}]}, {"id": "it1", "world": "work", "group": "bot", "ch": "m365", "who": "IT-Service", "ini": "IT", "bg": "#e7e9e4", "time": "07:12", "subj": "Passwort läuft in 10 Tagen ab", "prev": ""}, {"id": "it2", "world": "work", "group": "bot", "ch": "m365", "who": "SharePoint", "ini": "SP", "bg": "#e7e9e4", "time": "Mo", "subj": "3 Dateien wurden mit dir geteilt", "prev": ""}, {"id": "mama", "world": "private", "group": "reply", "ch": "wa", "who": "Mama", "ini": "M", "bg": "#fde2e7", "unread": true, "time": "10:15", "subj": "Sonntag Essen?", "prev": "Kommt ihr Sonntag zum Mittagessen? 🍲", "tags": [["accent", "Entwurf bereit"]], "sum": "Fragt, ob ihr Sonntag zum Mittagessen kommt.", "msgs": [{"time": "10:15", "text": "Kommt ihr Sonntag zum Mittagessen? Ich mache Rouladen 🍲"}], "drafts": ["Sehr gern, Mama! Wir sind gegen 12:30 Uhr da. Sollen wir einen Nachtisch mitbringen?", "Klar kommen wir! 12:30 passt? Ich bringe Kuchen mit 😊"]}, {"id": "werke", "world": "private", "group": "fyi", "ch": "mail", "who": "Stadtwerke", "ini": "SW", "bg": "#f3ead7", "unread": false, "time": "Mo", "subj": "Abschlag November · 86,00 €", "ok": "Beleg in der Steuer-Sammlung · fällig 10.11.", "sum": "Abschlagszahlung für November, Lastschrift am 10.11.", "msgs": [{"time": "Mo, 09:00", "text": "Ihr Abschlag für November über 86,00 € wird am 10.11. per Lastschrift eingezogen."}], "found": ["Beleg erkannt", "86,00 €", "Steuer-Sammlung"]}, {"id": "verein", "world": "private", "group": "fyi", "ch": "dc", "who": "Laufgruppe", "ini": "LG", "bg": "#dcfce7", "unread": true, "time": "Gestern", "subj": "Lauftreff Samstag 9 Uhr am See", "ok": "Termin erkannt · Sa 9 Uhr", "sum": "Treffpunkt am Samstag um 9 Uhr am See.", "msgs": [{"time": "Gestern, 20:14", "text": "Samstag 9 Uhr Lauftreff am See, 10 km locker. Wer ist dabei?"}], "found": ["Sa 9 Uhr", "Am See"]}, {"id": "shop", "world": "private", "group": "bot", "ch": "mail", "who": "Paketdienst", "ini": "PD", "bg": "#e7e9e4", "time": "Di", "subj": "Dein Paket kommt morgen", "prev": ""}]};
+(function(){
+  const $ = (s, r=document) => r.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const CH = { mail:['@','var(--ch-mail)','Mail'], m365:['M','var(--ch-m365)','Microsoft 365'], tg:['T','var(--ch-tg)','Telegram'], wa:['W','var(--ch-wa)','WhatsApp'], dc:['D','var(--ch-dc)','Discord'] };
+  const VIEWS = [['focus','i-focus'],['all','i-inbox'],['waiting','i-clock'],['drafts','i-draft'],['done','i-check']];
+  const S = { world:'business', view:'focus', sel:null, done:new Set(), variant:{}, tr:{}, bots:false, reading:false };
+  const T = D.ui;
+  const fmt = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k]);
+
+  const inWorld = t => t.world === S.world;
+  const isDone = t => S.done.has(t.id);
+  function inView(t, v){
+    if (!inWorld(t)) return false;
+    if (v === 'done') return isDone(t);
+    if (isDone(t)) return false;
+    if (v === 'focus') return t.group === 'reply' || t.group === 'fyi';
+    if (v === 'all') return true;
+    if (v === 'waiting') return !!t.waiting;
+    if (v === 'drafts') return !!t.drafts;
+    return false;
+  }
+  const visible = () => D.threads.filter(t => inView(t, S.view) && t.group !== 'bot');
+  const bots = () => D.threads.filter(t => inWorld(t) && t.group === 'bot' && !isDone(t));
+
+  function rail(){
+    const w = D.worlds.map(([k,l]) => `<button type="button" data-world="${k}" aria-pressed="${S.world===k}">${esc(l)}</button>`).join('');
+    const v = VIEWS.map(([k,ic]) => {
+      const n = D.threads.filter(t => inView(t,k) && (k==='done' || t.group!=='bot')).length;
+      return `<button type="button" class="it" data-view="${k}" aria-current="${S.view===k}"><svg><use href="#${ic}"/></svg>${esc(T.views[k])}${n && k!=='done' ? `<span class="c">${n}</span>`:''}</button>`;
+    }).join('');
+    const chans = [...new Set(D.threads.filter(inWorld).map(t => t.ch))];
+    const c = chans.map(k => `<div class="it ch"><i class="dot" style="background:${CH[k][1]}"></i>${CH[k][2]}<span class="c">${D.threads.filter(t => inWorld(t) && t.ch===k).length}</span></div>`).join('');
+    $('#rail').innerHTML = `<div class="worlds" role="group" aria-label="${esc(T.world)}">${w}</div><span class="lbl">${esc(T.viewsLbl)}</span>${v}<span class="lbl ch">${esc(T.channels)}</span>${c}`;
+  }
+
+  function row(t){
+    const [g,col] = CH[t.ch];
+    const tags = (t.tags||[]).map(([cls,txt]) => `<span class="pill ${cls}">${esc(txt)}</span>`).join('');
+    const prev = t.ok ? `<span class="prev ok" style="display:block">✓ ${esc(t.ok)}</span>` : `<span class="prev" style="display:block">${esc(t.prev)}</span>`;
+    return `<button type="button" role="option" class="row${t.unread && !isDone(t) ? ' unread':''}" data-id="${t.id}" aria-selected="${S.sel===t.id}">
+      <span class="av" style="background:${t.bg}">${esc(t.ini)}<span class="src" style="background:${col}">${g}</span></span>
+      <span><span class="r1"><span class="who">${esc(t.who)}</span><span class="time">${esc(t.time)}</span></span>
+      <span class="subj" style="display:block">${esc(t.subj)}</span>${prev}
+      ${tags ? `<span class="tags">${tags}</span>`:''}</span></button>`;
+  }
+
+  function list(){
+    const items = visible();
+    let h = `<div class="listhead"><h3>${esc(T.views[S.view])}</h3><span class="sub">${esc(fmt(items.length===1?T.count1:T.count,{n:items.length}))}</span></div>`;
+    if (S.view === 'focus'){
+      const rep = items.filter(t => t.group==='reply'), fyi = items.filter(t => t.group==='fyi');
+      if (rep.length) h += `<div class="grp">${esc(T.gReply)} <span class="cnt">${rep.length}</span></div>` + rep.map(row).join('');
+      if (fyi.length) h += `<div class="grp">${esc(T.gFyi)} <span class="cnt">${fyi.length}</span></div>` + fyi.map(row).join('');
+      const b = bots();
+      if (b.length){
+        h += `<button type="button" class="bundle" data-bundle aria-expanded="${S.bots}"><span class="stack" aria-hidden="true">${b.slice(0,3).map(t => `<span style="background:${CH[t.ch][1]}">${CH[t.ch][0]}</span>`).join('')}</span><span>${fmt(T.bundle,{n:b.length})}</span><span class="go">${esc(S.bots ? T.bundleClose : T.bundleOpen)}</span></button>`;
+        if (S.bots) h += `<ul class="bots">${b.map(t => `<li><b>${esc(t.who)}</b><span>${esc(t.subj)}</span><span>${esc(t.time)}</span></li>`).join('')}</ul>`;
+      }
+      if (!rep.length && !fyi.length) h += `<div class="empty"><b>${esc(T.zeroH)}</b>${esc(T.zeroP)}</div>`;
+    } else {
+      h += items.length ? items.map(row).join('') : `<div class="empty"><b>${esc(T.emptyH)}</b>${esc(T.emptyP)}</div>`;
+    }
+    $('#list').innerHTML = h;
+  }
+
+  function reader(){
+    const t = D.threads.find(x => x.id === S.sel);
+    const el = $('#read');
+    if (!t){ el.innerHTML = `<div class="empty" style="margin:auto"><b>${esc(T.pickH)}</b>${esc(T.pickP)}</div>`; return; }
+    const [,col,chName] = CH[t.ch];
+    const facts = (t.facts||[]).map(([k,v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+    const msgs = t.msgs.map((m,i) => {
+      const me = m.me;
+      const trd = !me && t.trans && S.tr[t.id] && i === t.msgs.length-1;
+      return `<div class="msg${me?' me':''}"><span class="av" style="background:${me?'#e1f1ed':t.bg};${me?'color:var(--accent)':''}">${me?esc(T.meIni):esc(t.ini)}</span><div><div class="mh"><b>${me?esc(T.me):esc(t.who)}</b><span>${esc(m.time)}</span></div><p>${esc(m.text)}</p>${trd?`<div class="tr"><small>${esc(T.translated)}</small>${esc(t.trans)}</div>`:''}</div></div>`;
+    }).join('');
+    const found = t.found ? `<div class="found"><span>${esc(T.noticed)}</span>${t.found.map(f => `<span class="pill">${esc(f)}</span>`).join('')}</div>` : '';
+    let action = '';
+    if (isDone(t)) action = `<div class="done-box">✓ ${esc(T.doneH)}<span>${esc(T.doneP)}</span></div>`;
+    else if (t.drafts){
+      const v = (S.variant[t.id]||0) % t.drafts.length;
+      action = `<div class="draft"><div class="dh">✦ ${esc(T.suggested)}<span class="tone">${esc(t.tone||T.tone)}</span></div><p>${esc(t.drafts[v])}</p>
+        <div class="dactions"><button type="button" class="tbtn send" data-act="send">${esc(T.send)} <kbd>⌘↵</kbd></button><button type="button" class="tbtn" data-act="rewrite">${esc(T.rewrite)}</button>${t.trans?`<button type="button" class="tbtn" data-act="translate">${esc(S.tr[t.id]?T.original:T.translate)}</button>`:''}<span class="note">${esc(T.nothing)}</span></div></div>`;
+    } else action = `<div class="dactions"><button type="button" class="tbtn" data-act="done">✓ ${esc(T.markDone)}</button><span class="note">${esc(t.ok||'')}</span></div>`;
+    el.innerHTML = `<div class="rhead"><button type="button" class="back" data-act="back">← ${esc(T.back)}</button><h3>${esc(t.subj)}</h3>
+      <div class="rmeta"><span class="pill" style="--dot:${col}"><span class="d"></span>${chName}</span><span class="pill">${esc(D.worlds.find(w => w[0]===t.world)[1])}</span>${t.sum?`<span class="sum">${esc(t.sum)}</span>`:''}</div></div>
+      ${facts?`<div class="facts">${facts}</div>`:''}<div class="rbody">${msgs}${found}${action}</div>`;
+    el.scrollTop = 0;
+  }
+
+  function render(){ rail(); list(); reader(); $('#inbox').classList.toggle('reading', S.reading); }
+  function firstSel(){ const v = visible(); S.sel = v.length ? v[0].id : null; }
+  let tt;
+  function toast(msg){ const e = $('#toast'); e.textContent = msg; e.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => e.classList.remove('on'), 2600); }
+  const narrow = () => matchMedia('(max-width:860px)').matches;
+
+  function act(a){
+    const t = D.threads.find(x => x.id === S.sel); if (!t && a!=='back') return;
+    if (a === 'send' || a === 'done'){
+      S.done.add(t.id); t.unread = false;
+      toast(a === 'send' ? fmt(T.toastSent,{who:t.who}) : T.toastDone);
+      const v = visible(); S.sel = v.length ? v[0].id : t.id; S.reading = false;
+    } else if (a === 'rewrite'){ S.variant[t.id] = (S.variant[t.id]||0) + 1; toast(T.toastRewrite); }
+    else if (a === 'translate'){ S.tr[t.id] = !S.tr[t.id]; }
+    else if (a === 'back'){ S.reading = false; }
+    render();
+  }
+
+  $('#app').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.world){ S.world = b.dataset.world; S.view = 'focus'; S.bots = false; S.reading = false; firstSel(); render(); }
+    else if (b.dataset.view){ S.view = b.dataset.view; S.reading = false; firstSel(); render(); }
+    else if (b.dataset.id){ S.sel = b.dataset.id; const t = D.threads.find(x => x.id===S.sel); t.unread = false; S.reading = narrow(); render(); if (S.reading) $('#app').scrollIntoView({block:'start'}); }
+    else if ('bundle' in b.dataset){ S.bots = !S.bots; list(); }
+    else if (b.dataset.act){ act(b.dataset.act); }
+  });
+  $('#list').addEventListener('keydown', e => {
+    if (!['ArrowDown','ArrowUp','j','k'].includes(e.key)) return;
+    e.preventDefault();
+    const v = visible(); if (!v.length) return;
+    let i = v.findIndex(t => t.id === S.sel);
+    i = (e.key==='ArrowDown'||e.key==='j') ? Math.min(v.length-1, i+1) : Math.max(0, i-1);
+    S.sel = v[i].id; v[i].unread = false; render();
+    const r = $(`.row[data-id="${S.sel}"]`); r && r.focus();
+  });
+  document.addEventListener('keydown', e => { if ((e.metaKey||e.ctrlKey) && e.key==='Enter' && document.activeElement.closest('#app')){ e.preventDefault(); act('send'); } });
+
+  // feature tabs (ARIA tabs pattern: arrows move, click selects)
+  const tabs = [...document.querySelectorAll('[role="tab"]')];
+  function pick(tab){ tabs.forEach(t => { const on = t===tab; t.setAttribute('aria-selected', on); t.tabIndex = on?0:-1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; }); }
+  tabs.forEach((t,i) => { t.addEventListener('click', () => pick(t)); t.addEventListener('keydown', e => { if (e.key==='ArrowRight'||e.key==='ArrowLeft'){ const n = tabs[(i + (e.key==='ArrowRight'?1:tabs.length-1)) % tabs.length]; pick(n); n.focus(); } }); });
+
+  firstSel(); render();
+})();
+</script>
 </body>
 </html>
