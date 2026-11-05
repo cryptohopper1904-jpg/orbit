@@ -6,498 +6,722 @@
 <title>Orbit — Unified Messaging Hub &amp; AI CRM</title>
 <meta name="description" content="Orbit pulls six channels into one inbox, drafts replies, files documents, books accounting and reads deadlines out of your mail. Private and self-hosted.">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#f4f5f1">
 <meta property="og:title" content="Orbit — Unified Messaging Hub & AI CRM">
 <meta property="og:description" content="Every message in one place — and an AI that does the work.">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128752;</text></svg>">
-<style>html,body{margin:0;background:#080b11}</style>
-</head>
-<body>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230f766e'/><circle cx='16' cy='16' r='5' fill='white'/><ellipse cx='16' cy='16' rx='12' ry='5' fill='none' stroke='white' stroke-width='2' transform='rotate(-28 16 16)'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
+  /* ------------------------------------------------------------------------
+     Orbit showcase — built on the Nov 2026 design system (same as AlgoVerdict):
+     warm off-white canvas, white surfaces, hairline borders, deep teal accent,
+     Geist for everything, Instrument Serif only for ONE accent word per H1,
+     exactly one dark summary block per page. Radii: 8 / 12 / 20.
+  ------------------------------------------------------------------------ */
   :root{
-    --ground:#080b11; --panel:#0e131c; --panel-2:#141c28; --panel-3:#1a2432;
-    --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
-    --ink:#e9edf3; --ink-2:#aeb7c4; --muted:#7f8896;
-    --teal:#19E3C4; --teal-2:#14B8A6; --teal-dim:rgba(25,227,196,.10);
-    --income:#2dd4a7; --expense:#f8817a; --amber:#f4c257;
-    --blue:#5b9dff; --violet:#9b8cff; --green:#3ecf8e;
-    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
-    --r:16px; --r-sm:10px;
+    --bg:#f4f5f1; --fg:#0a141c;
+    --ink:#0a141c; --ink-80:rgba(10,20,28,.80); --ink-70:rgba(10,20,28,.70); --ink-60:rgba(10,20,28,.68);
+    --accent:#0f766e; --accent-hover:#0b5f58; --accent-soft:#e1f1ed;
+    --surface:#ffffff; --muted:#eef0ea; --border:#e1e4dc; --border-strong:#cdd3c9;
+    --block:#0d1a24; --block-text:#c3ced6; --block-line:rgba(255,255,255,.1); --block-accent:#7ee3d4;
+    --gain:#0f7a3a; --loss:#c2352d; --warning:#8a5a00; --danger:#b91c1c;
+    /* channel colours — one per source, used only as small marks */
+    --ch-mail:#d9480f; --ch-icloud:#2f6fde; --ch-tg:#1f8fcf; --ch-wa:#15803d; --ch-dc:#5865f2; --ch-team:#0f766e;
+    --sans:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
+    --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+    --r-sm:8px; --r:12px; --r-block:20px;
+    --shadow-card:0 1px 2px rgb(13 26 36 / .04), 0 10px 28px -14px rgb(13 26 36 / .14);
+    --shadow-pop:0 1px 2px rgb(13 26 36 / .06), 0 18px 40px -16px rgb(13 26 36 / .22);
   }
   *{box-sizing:border-box}
-  body{margin:0}
-  .wrap{
-    background:
-      radial-gradient(1200px 600px at 82% -8%, rgba(25,227,196,.10), transparent 60%),
-      radial-gradient(900px 500px at -10% 4%, rgba(91,157,255,.07), transparent 55%),
-      var(--ground);
-    color:var(--ink); font-family:var(--sans); line-height:1.5;
-    -webkit-font-smoothing:antialiased; padding:0 20px 72px;
-  }
-  .col{max-width:1000px; margin:0 auto}
+  html{scroll-behavior:smooth; scroll-padding-top:76px}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .container{width:100%; max-width:1280px; margin-inline:auto; padding-inline:20px}
+  @media (min-width:640px){.container{padding-inline:24px}}
+  @media (min-width:1024px){.container{padding-inline:40px}}
   .mono{font-family:var(--mono)}
-  .eyebrow{
-    font-family:var(--mono); font-size:11.5px; letter-spacing:.22em; text-transform:uppercase;
-    color:var(--teal); display:inline-flex; align-items:center; gap:9px;
-  }
-  .eyebrow::before{content:""; width:22px; height:1px; background:var(--teal); opacity:.7}
+  .num{font-variant-numeric:tabular-nums}
 
-  /* ---------- HERO ---------- */
-  header.hero{padding:74px 0 30px}
-  .brandline{display:flex; align-items:center; gap:12px; margin-bottom:30px}
-  .logo{
-    width:34px; height:34px; border-radius:9px; display:grid; place-items:center;
-    background:linear-gradient(150deg,var(--teal),var(--teal-2)); color:#04201b; font-size:19px;
-    box-shadow:0 6px 22px -6px rgba(25,227,196,.55);
-  }
-  .brandline b{font-size:16px; letter-spacing:.01em}
-  .brandline .ver{font-family:var(--mono); font-size:11px; color:var(--muted); border:1px solid var(--line); padding:2px 7px; border-radius:20px}
-  h1{
-    font-size:clamp(40px,7.5vw,78px); line-height:1.02; letter-spacing:-.03em; margin:.28em 0 .18em;
-    font-weight:680; text-wrap:balance;
-  }
-  h1 .grad{background:linear-gradient(92deg,var(--teal),#7ef0dd); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .lede{font-size:clamp(17px,2.1vw,21px); color:var(--ink-2); max-width:33em; text-wrap:pretty}
-  .herometa{display:flex; flex-wrap:wrap; gap:10px 22px; margin-top:26px; font-size:13.5px; color:var(--muted)}
-  .herometa span{display:inline-flex; align-items:center; gap:7px}
-  .dot{width:7px; height:7px; border-radius:50%; background:var(--teal)}
+  /* ---------- kicker / headings / buttons / pills ---------- */
+  .kicker{display:inline-flex; align-items:center; gap:8px; margin:0; font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--accent)}
+  .kicker::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor; box-shadow:0 0 0 4px var(--accent-soft); flex:none}
+  h1,h2,h3{margin:0; letter-spacing:-.025em; text-wrap:balance}
+  h1 em, .accent-em{font-family:var(--serif); font-style:italic; font-weight:400; color:var(--accent); letter-spacing:-.01em; padding-right:.04em}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; height:44px; padding:0 20px; border-radius:12px; font-size:15px; font-weight:600; text-decoration:none; transition:background-color .15s, border-color .15s; white-space:nowrap}
+  .btn.sm{height:36px; padding:0 14px; font-size:14px; border-radius:10px}
+  .btn.primary{background:var(--ink); color:var(--bg)}
+  .btn.primary:hover{background:rgba(10,20,28,.85)}
+  .btn.outline{border:1px solid var(--border-strong); background:var(--surface); color:var(--ink)}
+  .btn.outline:hover{border-color:rgba(10,20,28,.4)}
+  .btn.accent{background:var(--accent); color:#fff}
+  .btn.accent:hover{background:var(--accent-hover)}
+  .btn:focus-visible, a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .pill{display:inline-flex; align-items:center; gap:6px; white-space:nowrap; border-radius:999px; border:1px solid var(--border); background:var(--muted); color:var(--ink-80); padding:1px 9px; font-size:12.5px; font-weight:600; line-height:20px}
+  .pill.dot::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--dot,currentColor)}
+  .pill.accent{border-color:rgba(15,118,110,.3); background:var(--accent-soft); color:var(--accent)}
+  .pill.good{border-color:rgba(21,112,58,.25); background:rgba(21,112,58,.08); color:var(--gain)}
+  .pill.warn{border-color:rgba(138,90,0,.25); background:rgba(138,90,0,.08); color:var(--warning)}
+  .pill.bad{border-color:rgba(185,28,28,.22); background:rgba(185,28,28,.07); color:var(--danger)}
 
-  /* ---------- CHANNEL STRIP ---------- */
-  .channels{
-    display:flex; flex-wrap:wrap; gap:9px; margin:40px 0 4px;
-    border-top:1px solid var(--line); padding-top:26px;
-  }
-  .chip{
-    display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-2);
-    background:var(--panel); border:1px solid var(--line); padding:8px 13px; border-radius:22px;
-  }
-  .chip i{width:8px;height:8px;border-radius:50%; font-style:normal}
+  /* ---------- site header ---------- */
+  .site-header{position:sticky; top:0; z-index:50; border-bottom:1px solid var(--border); background:rgba(244,245,241,.82); backdrop-filter:blur(12px) saturate(1.5); -webkit-backdrop-filter:blur(12px) saturate(1.5)}
+  .site-header .container{display:flex; align-items:center; gap:24px; height:62px}
+  .brand{display:flex; align-items:center; gap:10px; text-decoration:none; flex:none}
+  .brand .mark{width:30px; height:30px; flex:none}
+  .brand b{font-size:17px; font-weight:700; letter-spacing:-.02em}
+  .brand .ver{font-family:var(--mono); font-size:11.5px; color:var(--ink-60); border:1px solid var(--border); background:var(--surface); padding:1px 7px; border-radius:999px}
+  .site-nav{display:flex; gap:2px; margin-left:8px}
+  .site-nav a{font-size:14.5px; font-weight:500; color:var(--ink-70); text-decoration:none; padding:7px 11px; border-radius:8px}
+  .site-nav a:hover{background:var(--muted); color:var(--ink)}
+  .site-header .right{margin-left:auto; display:flex; align-items:center; gap:10px}
+  .selfhost{display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--ink-70)}
+  .selfhost::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--gain); box-shadow:0 0 0 3px rgba(15,122,58,.14)}
+  @media (max-width:1023px){.site-nav{display:none}}
+  @media (max-width:560px){.selfhost{display:none}}
+  .brand .ver{display:none}
 
-  /* ---------- SECTIONS ---------- */
-  section.view{padding:56px 0 8px; border-top:1px solid var(--line); margin-top:52px}
-  .view-head{display:flex; flex-direction:column; gap:12px; margin-bottom:26px; max-width:44em}
-  .view-head h2{font-size:clamp(24px,3.4vw,33px); letter-spacing:-.02em; margin:2px 0 0; font-weight:640; text-wrap:balance}
-  .view-head p{margin:0; color:var(--ink-2); font-size:16px}
-  .view-head p b{color:var(--ink); font-weight:600}
+  /* ---------- hero ---------- */
+  .hero{position:relative; isolation:isolate; border-bottom:1px solid var(--border)}
+  .hero::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background:radial-gradient(48% 70% at 12% 0%, rgba(15,118,110,.13), transparent 70%)}
+  .hero .container{display:grid; gap:22px; padding-top:48px; padding-bottom:40px}
+  .hero h1{max-width:20ch; font-size:clamp(2.25rem,5.6vw,4.25rem); line-height:1; font-weight:750; letter-spacing:-.035em}
+  .lede{max-width:58ch; margin:0; font-size:clamp(17px,1.8vw,19.5px); line-height:1.6; color:var(--ink-80); text-wrap:pretty}
+  .actions{display:flex; flex-wrap:wrap; gap:12px; padding-top:4px}
 
-  /* ---------- APP MOCK SHELL ---------- */
-  .app{
-    border:1px solid var(--line); border-radius:var(--r); overflow:hidden;
-    background:linear-gradient(180deg,var(--panel),#0b1017);
-    box-shadow:0 30px 80px -40px rgba(0,0,0,.9), 0 2px 0 rgba(255,255,255,.02) inset;
+  /* the ONE dark block on the page */
+  .darkstrip{margin-top:18px; background:var(--block); color:var(--block-text); border-radius:var(--r-block); display:grid; grid-template-columns:repeat(4,1fr); overflow:hidden}
+  .darkstrip > div{padding:22px 24px; border-left:1px solid var(--block-line)}
+  .darkstrip > div:first-child{border-left:0}
+  .darkstrip .k{display:block; font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--block-accent)}
+  .darkstrip .v{display:block; margin-top:6px; font-size:clamp(28px,3.4vw,40px); font-weight:700; letter-spacing:-.03em; color:#fff; line-height:1.05}
+  .darkstrip .s{display:block; margin-top:6px; font-size:14px; line-height:1.45}
+  @media (max-width:800px){.darkstrip{grid-template-columns:1fr 1fr} .darkstrip > div:nth-child(3){border-left:0} .darkstrip > div:nth-child(n+3){border-top:1px solid var(--block-line)}}
+
+
+  /* ---------- sections ---------- */
+  section.view{padding:72px 0 0}
+  #inbox{padding-top:48px}
+  .sh{display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 32px; margin-bottom:28px}
+  .sh > div{display:grid; gap:10px; max-width:64ch}
+  .sh h2{font-size:clamp(26px,3.2vw,34px); line-height:1.12; font-weight:650}
+  .sh p{margin:0; color:var(--ink-70); font-size:16.5px}
+  .sh p b{color:var(--ink); font-weight:600}
+  .sh p.kicker{font-size:13px; color:var(--accent)}
+
+  /* app frame */
+  .app{border:1px solid var(--border); border-radius:var(--r); background:var(--surface); box-shadow:var(--shadow-pop); overflow:hidden}
+  .appbar{display:flex; align-items:center; gap:14px; padding:10px 14px; border-bottom:1px solid var(--border); background:var(--surface)}
+  .appbar .tl{display:flex; gap:6px}
+  .appbar .tl i{width:10px; height:10px; border-radius:50%; background:var(--border-strong)}
+  .appbar .ab{display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600}
+  .appbar .ab svg{width:18px; height:18px}
+  .appbar nav{display:flex; gap:2px; margin-left:6px}
+  .appbar nav span{font-size:13px; color:var(--ink-60); padding:5px 10px; border-radius:8px; font-weight:500}
+  .appbar nav span.on{color:var(--ink); background:var(--muted)}
+  .appbar .search{margin-left:auto; display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-60); border:1px solid var(--border); background:var(--bg); border-radius:8px; padding:5px 10px; min-width:200px}
+  .appbar .search kbd{margin-left:auto; font-family:var(--mono); font-size:11px; border:1px solid var(--border-strong); border-bottom-width:2px; border-radius:5px; padding:0 5px; background:var(--surface); color:var(--ink-70)}
+  @media (max-width:820px){.appbar .search{display:none}}
+  @media (max-width:560px){.appbar nav span:not(.on){display:none}}
+
+  /* legend under a mock: numbered callouts that explain what you see */
+  .legend{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px}
+  .legend div{display:flex; gap:12px; align-items:flex-start; font-size:14.5px; color:var(--ink-70); line-height:1.5}
+  .legend b{color:var(--ink); font-weight:600}
+  .n{flex:none; width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff; font-size:12px; font-weight:700; display:inline-grid; place-items:center; font-family:var(--sans); line-height:1}
+  .n.on-mock{position:absolute; z-index:2; box-shadow:0 0 0 4px rgba(15,118,110,.18)}
+  @media (max-width:820px){.legend{grid-template-columns:1fr}}
+
+  /* ---------- INBOX (three panes) ---------- */
+  .inbox{display:grid; grid-template-columns:212px minmax(0,1fr) minmax(0,1.15fr); min-height:560px}
+  .rail{border-right:1px solid var(--border); background:var(--bg); padding:14px 10px; display:flex; flex-direction:column; gap:1px; position:relative}
+  .rail .lbl{font-size:11.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-60); margin:14px 8px 6px}
+  .rail .lbl:first-child{margin-top:2px}
+  .rail .it{display:flex; align-items:center; gap:10px; font-size:14px; color:var(--ink-80); padding:6px 8px; border-radius:8px}
+  .rail .it.on{background:var(--surface); color:var(--ink); font-weight:600; box-shadow:0 0 0 1px var(--border), 0 1px 2px rgb(13 26 36 / .05)}
+  .rail .it svg{width:16px; height:16px; flex:none; color:var(--ink-60)}
+  .rail .it.on svg{color:var(--accent)}
+  .rail .it .c{margin-left:auto; font-size:12.5px; color:var(--ink-60); font-variant-numeric:tabular-nums}
+  .rail .it.on .c{color:var(--accent); font-weight:700}
+  .rail .it i{width:8px; height:8px; border-radius:50%; flex:none; margin:0 4px}
+  .worlds{display:flex; gap:4px; padding:0 4px}
+  .worlds span{flex:1; text-align:center; font-size:12px; font-weight:600; padding:5px 0; border-radius:7px; color:var(--ink-60); border:1px solid transparent}
+  .worlds span.on{background:var(--surface); color:var(--ink); border-color:var(--border)}
+
+  .list{border-right:1px solid var(--border); display:flex; flex-direction:column; min-width:0; position:relative}
+  .listhead{display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--border)}
+  .listhead h3{font-size:16px; font-weight:650; letter-spacing:-.015em}
+  .listhead .sub{font-size:13px; color:var(--ink-60)}
+  .listhead .seg{margin-left:auto; display:flex; background:var(--muted); border-radius:8px; padding:2px}
+  .listhead .seg span{font-size:12.5px; font-weight:600; color:var(--ink-60); padding:3px 9px; border-radius:6px}
+  .listhead .seg span.on{background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgb(13 26 36 / .08)}
+  .grp{display:flex; align-items:center; gap:8px; padding:10px 16px 6px; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-60)}
+  .grp .cnt{font-family:var(--mono); letter-spacing:0; font-weight:500}
+  .row{display:grid; grid-template-columns:36px minmax(0,1fr); gap:12px; padding:11px 16px; border-top:1px solid var(--border); position:relative}
+  .grp + .row{border-top:0}
+  .row.unread .who::after{content:""; display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--accent); margin-left:7px; vertical-align:1px}
+  .row.sel{background:var(--accent-soft)}
+  .row.sel::before{content:""; position:absolute; left:0; top:8px; bottom:8px; width:3px; border-radius:0 3px 3px 0; background:var(--accent)}
+  .av{position:relative; width:36px; height:36px; border-radius:50%; display:grid; place-items:center; font-size:13px; font-weight:700; color:var(--ink-80)}
+  .av .src{position:absolute; right:-3px; bottom:-3px; width:17px; height:17px; border-radius:50%; border:2px solid var(--surface); display:grid; place-items:center; color:#fff; font-size:8.5px; font-weight:800}
+  .row.sel .av .src{border-color:var(--accent-soft)}
+  .r1{display:flex; align-items:baseline; gap:8px; min-width:0}
+  .who{font-size:14.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .row:not(.unread) .who{font-weight:500; color:var(--ink-80)}
+  .time{margin-left:auto; flex:none; font-size:12.5px; color:var(--ink-60); font-variant-numeric:tabular-nums}
+  .subj{font-size:14px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px}
+  .row:not(.unread) .subj{color:var(--ink-70)}
+  .prev{font-size:13.5px; color:var(--ink-60); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .prev.ok{color:var(--gain)}
+  .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:7px}
+  .bundle{display:flex; align-items:center; gap:12px; padding:12px 16px; border-top:1px solid var(--border); background:var(--bg); font-size:14px; color:var(--ink-70)}
+  .bundle .stack{display:flex}
+  .bundle .stack span{width:24px; height:24px; border-radius:50%; border:2px solid var(--bg); margin-left:-7px; display:grid; place-items:center; color:#fff; font-size:9px; font-weight:800}
+  .bundle .stack span:first-child{margin-left:0}
+  .bundle b{color:var(--ink); font-weight:600}
+  .bundle .go{margin-left:auto; font-size:13px; color:var(--accent); font-weight:600}
+
+  .read{display:flex; flex-direction:column; min-width:0; background:var(--surface); position:relative}
+  .rhead{padding:16px 20px 14px; border-bottom:1px solid var(--border)}
+  .rhead h3{font-size:18px; font-weight:650; letter-spacing:-.02em; line-height:1.25}
+  .rmeta{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:8px; font-size:13px; color:var(--ink-60)}
+  .rbody{padding:18px 20px; display:flex; flex-direction:column; gap:14px; flex:1}
+  .msg{display:grid; grid-template-columns:32px minmax(0,1fr); gap:12px}
+  .msg .av{width:32px; height:32px; font-size:12px}
+  .msg .mh{display:flex; gap:8px; align-items:baseline; font-size:13.5px}
+  .msg .mh b{font-weight:600}
+  .msg .mh span{color:var(--ink-60); font-size:12.5px}
+  .msg p{margin:4px 0 0; font-size:14.5px; line-height:1.6; color:var(--ink-80)}
+  .found{display:flex; flex-wrap:wrap; gap:8px; padding:10px 12px; border:1px dashed var(--border-strong); border-radius:10px; font-size:13px; color:var(--ink-70); align-items:center}
+  .found > span:first-child{font-weight:600; color:var(--ink)}
+  .draft{border:1px solid rgba(15,118,110,.3); background:linear-gradient(180deg,#f0f8f5,#fff 70%); border-radius:12px; padding:14px 16px; position:relative}
+  .draft .dh{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--accent)}
+  .draft .dh svg{width:15px; height:15px}
+  .draft .dh .tone{margin-left:auto; text-transform:none; letter-spacing:0; font-weight:500; color:var(--ink-60)}
+  .draft p{margin:8px 0 0; font-size:14.5px; line-height:1.6; color:var(--ink)}
+  .dactions{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:14px}
+  .tbtn{display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface); font-size:13px; font-weight:600; color:var(--ink-80)}
+  .tbtn.send{background:var(--ink); border-color:var(--ink); color:#fff}
+  .tbtn kbd{font-family:var(--mono); font-size:10.5px; opacity:.65; font-weight:500}
+  .dactions .note{margin-left:auto; font-size:12.5px; color:var(--ink-60)}
+
+  .ctx{border-bottom:1px solid var(--border); background:var(--surface); padding:8px 20px}
+  .rmeta .sum{flex-basis:100%; font-size:14px; color:var(--ink-80)}
+  .earlier{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-60); padding-bottom:12px; border-bottom:1px solid var(--border)}
+  .earlier .av{width:28px; height:28px; font-size:10px; flex:none}
+  .earlier b{color:var(--ink-80); font-weight:600}
+  .earlier > span:nth-child(2){min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .earlier .more3{margin-left:auto; flex:none; font-weight:600; color:var(--accent)}
+  .ctx .ch{display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:var(--ink-70); margin-bottom:8px}
+  .ctx .cg{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
+  .ctx .cg span{display:block; font-size:12px; color:var(--ink-60)}
+  .ctx .cg b{display:block; font-size:13.5px; font-weight:600}
+  @media (max-width:560px){.ctx .cg{grid-template-columns:1fr 1fr}}
+  @media (max-width:1100px){
+    .inbox{grid-template-columns:180px minmax(0,1fr) minmax(0,1fr)}
   }
-  .topbar{display:flex; align-items:center; gap:14px; padding:11px 16px; border-bottom:1px solid var(--line); background:rgba(255,255,255,.015)}
-  .tl{display:flex; gap:7px}
-  .tl i{width:11px;height:11px;border-radius:50%;background:#2b3543}
-  .topbar .b{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink)}
-  .topbar .b .lg{width:17px;height:17px;border-radius:5px;background:linear-gradient(150deg,var(--teal),var(--teal-2))}
-  .topbar nav{display:flex; gap:3px; margin-left:6px}
-  .topbar nav a{font-size:12.5px; color:var(--muted); padding:4px 10px; border-radius:8px; text-decoration:none}
-  .topbar nav a.on{color:var(--ground); background:var(--teal); font-weight:600}
+  @media (max-width:900px){
+    .inbox{grid-template-columns:1fr; min-height:0}
+    .rail{flex-direction:row; flex-wrap:nowrap; overflow-x:auto; border-right:0; border-bottom:1px solid var(--border); padding:10px; gap:6px}
+    .rail .lbl, .rail .worlds, .rail .ch{display:none}
+    .rail .it{flex:none; background:var(--surface); box-shadow:0 0 0 1px var(--border)}
+    .list{border-right:0; border-bottom:1px solid var(--border)}
+    .n.on-mock{display:none}
+    .rail .worlds{display:flex; flex:none; padding:0}
+    .rail .worlds span{padding:6px 10px}
+    .rail .it:nth-of-type(n+4){display:none}
+    .list .grp ~ .grp, .list .grp ~ .grp ~ .row{display:none}
+    .earlier, .ctx{display:none}
+    .dactions .tbtn:nth-child(n+3){display:none}
+    .bundle .go{white-space:nowrap}
+  }
+
+  /* ---------- ACCOUNTING ---------- */
+  .acct-top{display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid var(--border)}
+  .acct-top > div{padding:16px 20px; border-left:1px solid var(--border)}
+  .acct-top > div:first-child{border-left:0}
+  .acct-top .k{font-size:12.5px; font-weight:600; color:var(--ink-60); text-transform:uppercase; letter-spacing:.06em}
+  .acct-top .v{font-size:26px; font-weight:700; letter-spacing:-.03em; margin-top:2px; font-variant-numeric:tabular-nums}
+  .acct-top .s{font-size:13px; color:var(--ink-60)}
+  .tbl{width:100%; border-collapse:collapse; font-size:14.5px; font-variant-numeric:tabular-nums}
+  .tbl th{background:var(--muted); font-size:12.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-60); text-align:left; padding:9px 20px}
+  .tbl td{padding:13px 20px; border-top:1px solid var(--border); vertical-align:middle}
+  .tbl .name{font-weight:600}
+  .tbl .sub{font-size:13px; color:var(--ink-60)}
+  .tbl .amt{text-align:right; font-weight:600; white-space:nowrap}
+  .tbl .amt.in{color:var(--gain)} .tbl .amt.out{color:var(--ink)}
+  .tbl th.r{text-align:right}
   .scrollx{overflow-x:auto}
+  @media (max-width:640px){.acct-top{grid-template-columns:1fr} .acct-top > div{border-left:0; border-top:1px solid var(--border)} .acct-top > div:first-child{border-top:0} .tbl .hide-sm{display:none}}
 
-  /* ---------- INBOX MOCK ---------- */
-  .inbox{display:grid; grid-template-columns:168px 1fr; min-height:340px}
-  .rail{border-right:1px solid var(--line); padding:14px 12px; display:flex; flex-direction:column; gap:2px; background:rgba(0,0,0,.14)}
-  .rail .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.16em; color:var(--muted); margin:8px 4px 4px}
-  .rail a{display:flex; align-items:center; gap:9px; font-size:13px; color:var(--ink-2); padding:6px 8px; border-radius:8px; text-decoration:none}
-  .rail a.on{background:var(--teal-dim); color:var(--teal)}
-  .rail a i{width:8px;height:8px;border-radius:50%; font-style:normal}
-  .rail a b{margin-left:auto; font-family:var(--mono); font-size:10.5px; color:var(--muted); font-weight:400}
-  .list{display:flex; flex-direction:column}
-  .mail{padding:13px 16px; border-bottom:1px solid var(--line); display:flex; flex-direction:column; gap:4px}
-  .mail:last-child{border-bottom:none}
-  .mail .r1{display:flex; align-items:center; gap:9px; font-size:13.5px}
-  .mail .r1 .from{font-weight:600; color:var(--ink)}
-  .mail .r1 .badge{font-family:var(--mono); font-size:10px; color:var(--muted); border:1px solid var(--line); border-radius:5px; padding:1px 5px}
-  .mail .r1 .t{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--muted)}
-  .mail .subj{font-size:14px; color:var(--ink)}
-  .mail .prev{font-size:12.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-  .mail.sel{background:var(--teal-dim); box-shadow:inset 3px 0 0 var(--teal)}
-  .aibar{display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; background:rgba(0,0,0,.18); border-top:1px solid var(--line)}
-  .aibtn{font-size:12.5px; color:var(--ink-2); border:1px solid var(--line-2); background:var(--panel-2); padding:6px 12px; border-radius:9px; display:inline-flex; gap:6px; align-items:center}
-  .aibtn.p{color:var(--teal); border-color:rgba(25,227,196,.4); background:var(--teal-dim)}
-  .aibar .note{margin-left:auto; align-self:center; font-size:11.5px; color:var(--muted)}
+  /* ---------- FILES ---------- */
+  .files{padding:20px; display:grid; gap:12px}
+  .qrow{display:flex; gap:10px}
+  .qrow .inp{flex:1; display:flex; align-items:center; gap:10px; border:1px solid var(--border-strong); border-radius:10px; padding:0 14px; height:44px; font-size:15px; background:var(--surface); box-shadow:0 0 0 4px var(--accent-soft)}
+  .qrow .inp svg{width:17px; height:17px; color:var(--ink-60)}
+  .answer{border:1px solid rgba(15,118,110,.3); background:linear-gradient(180deg,#f0f8f5,#fff 80%); border-radius:12px; padding:16px 18px}
+  .answer .dh{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--accent)}
+  .answer p{margin:8px 0 0; font-size:15px; line-height:1.6}
+  .answer ul{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:6px}
+  .answer li{display:flex; gap:10px; font-size:14.5px; color:var(--ink-80)}
+  .answer li::before{content:""; flex:none; width:6px; height:6px; margin-top:8px; border-radius:50%; background:var(--accent)}
+  .answer sup{font-family:var(--mono); font-size:10.5px; color:var(--accent); font-weight:600; margin-left:2px}
+  .frow{display:flex; align-items:center; gap:14px; padding:12px 14px; border:1px solid var(--border); border-radius:10px}
+  .ficon{width:36px; height:40px; border-radius:6px; flex:none; display:grid; place-items:end center; padding-bottom:5px; color:#fff; font-size:9.5px; font-weight:800; letter-spacing:.04em}
+  .frow .fn{font-weight:600; font-size:14.5px}
+  .frow .fm{font-size:13px; color:var(--ink-60)}
+  .frow .ref{font-family:var(--mono); font-size:11px; color:var(--accent); border:1px solid rgba(15,118,110,.3); border-radius:5px; padding:0 5px; margin-right:4px}
+  .frow .open{margin-left:auto}
 
-  /* ---------- ACCOUNTING MOCK ---------- */
-  .acct{padding:6px 0}
-  .acrow{display:grid; grid-template-columns:96px 1fr auto auto; align-items:center; gap:14px; padding:14px 18px; border-bottom:1px solid var(--line)}
-  .acrow:last-child{border-bottom:none}
-  .tag{font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; text-align:center; padding:4px 0; border-radius:20px}
-  .tag.in{color:var(--income); background:rgba(45,212,167,.12)}
-  .tag.out{color:var(--expense); background:rgba(248,129,122,.12)}
-  .acrow .name{font-weight:600; font-size:14px}
-  .acrow .sub{font-size:12px; color:var(--muted); margin-top:1px}
-  .amt{font-family:var(--mono); font-size:14px; font-variant-numeric:tabular-nums; text-align:right}
-  .lex{font-size:12px; color:var(--muted); border:1px solid var(--line); border-radius:8px; padding:5px 11px; white-space:nowrap}
-  .lex.done{color:var(--income); border-color:rgba(45,212,167,.35)}
-
-  /* ---------- FILES MOCK ---------- */
-  .files{padding:20px}
-  .searchrow{display:flex; gap:10px; margin-bottom:16px}
-  .searchrow .inp{flex:1; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 14px; font-size:14px; color:var(--ink)}
-  .searchrow .go{background:var(--teal); color:var(--ground); font-weight:600; border-radius:10px; padding:10px 18px; font-size:14px}
-  .aicard{border:1px solid rgba(25,227,196,.28); border-radius:13px; padding:15px 17px; background:linear-gradient(180deg,rgba(25,227,196,.07),rgba(25,227,196,.015)); margin-bottom:14px}
-  .aicard .h{font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; color:var(--teal); display:flex; align-items:center; gap:8px; margin-bottom:8px}
-  .aicard p{margin:0; font-size:14px; color:var(--ink-2)}
-  .frow{display:flex; align-items:center; gap:13px; padding:12px 15px; border:1px solid var(--line); border-radius:11px; margin-top:9px; background:rgba(255,255,255,.015)}
-  .frow .ic{font-size:20px}
-  .frow .fn{font-weight:600; font-size:14px}
-  .frow .fm{font-size:12px; color:var(--muted); margin-top:1px}
-  .frow .site{margin-left:auto; font-size:11.5px; color:var(--muted)}
-  .frow .open{font-size:12px; color:var(--ink-2); border:1px solid var(--line-2); border-radius:8px; padding:5px 11px}
-
-  /* ---------- SLIDES MOCK ---------- */
+  /* ---------- SLIDES ---------- */
   .slides{padding:20px}
-  .tags{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:18px}
-  .tag2{font-size:12px; color:var(--ink-2); background:rgba(25,227,196,.09); border:1px solid rgba(25,227,196,.16); border-radius:16px; padding:5px 11px}
-  .tag2.on{background:var(--teal); color:var(--ground); border-color:var(--teal); font-weight:600}
-  .slidegrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px}
-  .thumb{border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--panel-2)}
-  .thumb .pic{aspect-ratio:16/10; display:grid; place-items:center; color:rgba(255,255,255,.5); font-size:11px; font-family:var(--mono)}
-  .thumb .cap{padding:8px 10px; font-size:11.5px; color:var(--ink-2); border-top:1px solid var(--line)}
-  .slidebar{display:flex; align-items:center; gap:12px; margin-top:16px; padding-top:16px; border-top:1px solid var(--line)}
-  .basket{font-size:13px; color:var(--ink-2)}
-  .export{margin-left:auto; background:var(--teal); color:var(--ground); font-weight:600; border-radius:10px; padding:9px 16px; font-size:13.5px}
+  .brief{display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg); font-size:14.5px; margin-bottom:16px}
+  .brief b{font-weight:600}
+  .brief .btn{margin-left:auto}
+  .tagrow{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px}
+  .sgrid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px}
+  .thumb{border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--surface); position:relative}
+  .thumb.pick{box-shadow:0 0 0 2px var(--accent)}
+  .thumb .chk{position:absolute; top:8px; right:8px; width:20px; height:20px; border-radius:50%; background:var(--accent); color:#fff; display:grid; place-items:center; font-size:12px; font-weight:800}
+  .pic{aspect-ratio:16/10; padding:10% 9%; display:flex; flex-direction:column; gap:6%; background:#fbfbf8; border-bottom:1px solid var(--border)}
+  .pic .t{height:9%; width:55%; background:var(--ink); border-radius:2px; opacity:.85}
+  .pic .t2{height:6%; width:38%; background:var(--ink); border-radius:2px; opacity:.3}
+  .pic .bars{flex:1; display:flex; align-items:flex-end; gap:7%}
+  .pic .bars i{flex:1; background:var(--accent); border-radius:2px 2px 0 0; opacity:.8}
+  .pic .lines{display:grid; gap:9%; flex:1; align-content:start; padding-top:4%}
+  .pic .lines i{height:5px; border-radius:3px; background:var(--border-strong)}
+  .pic.cover{background:linear-gradient(135deg,#0f766e,#0b4f4a); justify-content:flex-end}
+  .pic.cover .t{background:#fff; opacity:.95} .pic.cover .t2{background:#fff; opacity:.5}
+  .pic .kpis{flex:1; display:grid; grid-template-columns:1fr 1fr; gap:7%}
+  .pic .kpis i{border:1px solid var(--border-strong); border-radius:4px; position:relative}
+  .pic .kpis i::after{content:""; position:absolute; left:15%; top:30%; width:45%; height:28%; background:var(--accent); opacity:.7; border-radius:2px}
+  .thumb .cap{padding:8px 10px; font-size:13px; color:var(--ink-80); display:flex; justify-content:space-between; gap:8px}
+  .thumb .cap span{color:var(--ink-60); font-size:12px}
+  .sbar{display:flex; align-items:center; gap:12px; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); font-size:14.5px; color:var(--ink-70)}
+  .sbar b{color:var(--ink)}
+  .sbar .btn{margin-left:auto}
+  @media (max-width:820px){.sgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-  /* ---------- TASKS MOCK ---------- */
-  .board{display:grid; grid-template-columns:repeat(3,minmax(210px,1fr)); gap:14px; padding:18px; min-width:660px}
-  .cola h4{margin:0 0 12px; font-size:13px; display:flex; align-items:center; gap:8px}
-  .cola h4 span{font-family:var(--mono); font-size:11px; color:var(--muted)}
-  .cola h4::before{content:""; width:26px; height:2px; border-radius:2px}
-  .cola.over h4::before{background:var(--expense)}
-  .cola.today h4::before{background:var(--amber)}
-  .cola.week h4::before{background:var(--teal)}
-  .task{border:1px solid var(--line); border-radius:11px; padding:12px 13px; margin-bottom:10px; background:var(--panel-2); display:flex; flex-direction:column; gap:7px}
-  .task .tt{font-size:13.5px; font-weight:560; color:var(--ink)}
-  .task .ev{font-size:11.5px; color:var(--muted); border-left:2px solid var(--line-2); padding-left:8px}
+  /* ---------- TASKS ---------- */
+  .board{display:grid; grid-template-columns:repeat(3,minmax(220px,1fr)); gap:16px; padding:18px; min-width:700px; background:var(--bg)}
+  .col h4{margin:0 0 12px; font-size:14px; font-weight:650; display:flex; align-items:center; gap:8px}
+  .col h4 .c{font-size:12px; font-weight:600; padding:0 7px; border-radius:999px; background:color-mix(in srgb, currentColor 12%, transparent)}
+  .col.over h4{color:var(--danger)} .col.today h4{color:var(--warning)} .col.week h4{color:var(--accent)}
+  .task{border:1px solid var(--border); border-radius:10px; padding:12px 13px; margin-bottom:10px; background:var(--surface); display:grid; gap:8px; box-shadow:0 1px 2px rgb(13 26 36 / .04)}
+  .task .tt{font-size:14.5px; font-weight:600}
+  .task q{display:block; font-size:13px; color:var(--ink-70); border-left:2px solid var(--accent); padding-left:9px; quotes:"“" "”"}
+  .task .from{font-size:12.5px; color:var(--ink-60)}
   .task .foot{display:flex; align-items:center; gap:8px}
-  .task .due{font-family:var(--mono); font-size:11px; color:var(--ink-2); background:rgba(255,255,255,.05); padding:2px 7px; border-radius:6px}
-  .kifrist{font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--amber); border:1px solid rgba(244,194,87,.35); border-radius:6px; padding:2px 6px}
+  .task .due{font-size:12.5px; font-weight:600; font-variant-numeric:tabular-nums}
 
-  /* ---------- AND MORE ---------- */
-  .more{display:grid; grid-template-columns:repeat(auto-fit,minmax(198px,1fr)); gap:14px}
-  .mtile{border:1px solid var(--line); border-radius:13px; padding:16px 16px 17px; background:linear-gradient(180deg,rgba(255,255,255,.02),transparent); display:flex; flex-direction:column; gap:7px}
-  .mtile .mi{font-size:21px}
-  .mtile b{font-size:14.5px; color:var(--ink); font-weight:620}
-  .mtile p{margin:0; font-size:13px; color:var(--muted); line-height:1.45}
-  .mtile.key{border-color:rgba(25,227,196,.3); background:linear-gradient(180deg,rgba(25,227,196,.06),transparent)}
-  .mtile.key b{color:var(--teal)}
+  /* ---------- MORE + CLOSING ---------- */
+  .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px}
+  .tile{border:1px solid var(--border); border-radius:var(--r); background:var(--surface); box-shadow:var(--shadow-card); padding:18px; display:grid; gap:8px; align-content:start}
+  .tile .ti{width:36px; height:36px; border-radius:10px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center}
+  .tile .ti svg{width:19px; height:19px}
+  .tile b{font-size:15.5px; font-weight:650}
+  .tile p{margin:0; font-size:14.5px; color:var(--ink-70); line-height:1.5}
+  .worlds3{display:flex; gap:6px; margin-top:4px}
+  .worlds3 span{font-size:12px; font-weight:600; padding:2px 8px; border-radius:6px; border:1px solid var(--border); background:var(--bg)}
 
-  /* ---------- CLOSING ---------- */
-  .close{margin-top:64px; border-top:1px solid var(--line); padding-top:44px; display:grid; grid-template-columns:repeat(3,1fr); gap:22px}
-  .pt h3{font-size:15px; margin:0 0 7px; display:flex; align-items:center; gap:9px}
-  .pt h3 em{font-style:normal; color:var(--teal)}
-  .pt p{margin:0; font-size:14px; color:var(--muted)}
-  footer{max-width:1000px; margin:56px auto 0; padding-top:26px; border-top:1px solid var(--line); display:flex; flex-wrap:wrap; gap:10px 20px; align-items:center; font-size:13px; color:var(--muted)}
-  footer .mono{color:var(--ink-2)}
+  .promise{margin-top:72px; display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .promise > div{border-top:2px solid var(--ink); padding-top:16px}
+  .promise h3{font-size:17px; font-weight:650; letter-spacing:-.015em}
+  .promise p{margin:6px 0 0; font-size:15px; color:var(--ink-70)}
+  @media (max-width:820px){.promise{grid-template-columns:1fr; gap:24px}}
 
-  @media(max-width:720px){
-    .inbox{grid-template-columns:1fr}
-    .rail{flex-direction:row; flex-wrap:wrap; border-right:none; border-bottom:1px solid var(--line)}
-    .rail .lbl{display:none}
-    .acrow{grid-template-columns:80px 1fr auto; }
-    .acrow .lex{display:none}
-    .close{grid-template-columns:1fr}
-  }
+  footer.site-footer{margin-top:72px; border-top:1px solid var(--border); background:var(--surface)}
+  footer.site-footer .container{display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center; padding-top:22px; padding-bottom:28px; font-size:13.5px; color:var(--ink-60)}
+  footer.site-footer .mono{color:var(--ink-80)}
+  footer.site-footer .right{margin-left:auto}
 </style>
+</head>
+<body>
 
-<div class="wrap">
-  <div class="col">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="logo" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0f766e"/><circle cx="16" cy="16" r="5" fill="#fff"/><ellipse cx="16" cy="16" rx="12" ry="5" fill="none" stroke="#fff" stroke-width="2" transform="rotate(-28 16 16)"/><circle cx="26.3" cy="10.6" r="2.2" fill="#7ee3d4"/></symbol>
+    <symbol id="i-focus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></symbol>
+    <symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-draft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  </defs>
+</svg>
 
-    <header class="hero">
-      <div class="brandline">
-        <span class="logo">🛰</span>
-        <b>Orbit</b>
-        <span class="ver mono">v0.40.0</span>
-      </div>
-      <div class="eyebrow">Unified messaging hub · AI CRM</div>
-      <h1>Every message in <span class="grad">one place</span> — and an AI that does the work.</h1>
-      <p class="lede">Orbit pulls six channels into a single inbox, then drafts replies, files documents, books your accounting and reads deadlines out of your mail. Private and self-hosted — the AI proposes, you approve.</p>
-      <div class="herometa">
-        <span><i class="dot"></i> 6 channels, 1 inbox</span>
-        <span><i class="dot"></i> Draft · translate · rewrite</span>
-        <span><i class="dot"></i> Accounting &amp; document filing</span>
-        <span><i class="dot"></i> Runs on your own server</span>
-      </div>
-    </header>
-
-    <div class="channels">
-      <span class="chip"><i style="background:var(--expense)"></i> Work Mail</span>
-      <span class="chip"><i style="background:var(--expense)"></i> Personal Mail</span>
-      <span class="chip"><i style="background:var(--blue)"></i> iCloud</span>
-      <span class="chip"><i style="background:var(--blue)"></i> Telegram</span>
-      <span class="chip"><i style="background:var(--green)"></i> WhatsApp</span>
-      <span class="chip"><i style="background:var(--violet)"></i> Discord</span>
-      <span class="chip"><i style="background:var(--teal)"></i> Team / M365</span>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="#top" aria-label="Orbit — top">
+      <svg class="mark"><use href="#logo"/></svg>
+      <b>Orbit</b>
+      <span class="ver">v0.40.0</span>
+    </a>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="#inbox">Inbox</a>
+      <a href="#accounting">Accounting</a>
+      <a href="#files">Files</a>
+      <a href="#slides">Slides</a>
+      <a href="#tasks">Tasks</a>
+    </nav>
+    <div class="right">
+      <span class="selfhost">Self-hosted</span>
+      <a class="btn primary sm" href="#inbox">See the inbox</a>
     </div>
+  </div>
+</header>
 
-    <!-- ===== INBOX ===== -->
-    <section class="view">
-      <div class="view-head">
-        <div class="eyebrow">The inbox</div>
-        <h2>One thread list for work, personal and social.</h2>
-        <p>Email, iCloud, Telegram, WhatsApp, Discord and your team channel land side by side. Open any message and the AI can <b>draft a reply</b>, <b>rewrite</b> your own text, or <b>translate</b> it — inline, in one click. It never sends on its own.</p>
+<main id="top">
+  <section class="hero">
+    <div class="container">
+      <p class="kicker">Unified messaging hub · AI CRM</p>
+      <h1>Every message in <em>one place</em> — and an AI that does the work.</h1>
+      <p class="lede">Six channels land in one inbox, sorted by what needs you. Orbit drafts the reply, files the attachment, books the invoice and turns “by Friday” into a task. It runs on your own server — the AI proposes, you approve.</p>
+      <div class="actions">
+        <a class="btn primary" href="#inbox">Walk through the inbox ↓</a>
+        <a class="btn outline" href="#more">All features</a>
       </div>
-      <div class="app">
-        <div class="topbar">
-          <span class="tl"><i></i><i></i><i></i></span>
-          <span class="b"><span class="lg"></span> Orbit</span>
-          <nav><a class="on">Inbox</a><a>Files</a><a>Tasks</a><a>Accounting</a></nav>
+
+      <div class="darkstrip" role="list" aria-label="Orbit at a glance">
+        <div role="listitem"><span class="k">Channels</span><span class="v num">6 → 1</span><span class="s">Mail, iCloud, Telegram, WhatsApp, Discord and Teams in one list.</span></div>
+        <div role="listitem"><span class="k">Sent by the AI</span><span class="v num">0</span><span class="s">Every reply is a draft until you press Send.</span></div>
+        <div role="listitem"><span class="k">Worlds</span><span class="v num">3</span><span class="s">Private, business and work stay strictly apart.</span></div>
+        <div role="listitem"><span class="k">Your data</span><span class="v">Your server</span><span class="s">No third-party cloud reads your inbox.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+
+    <!-- ================= INBOX ================= -->
+    <section class="view" id="inbox">
+      <div class="sh">
+        <div>
+          <p class="kicker">The inbox</p>
+          <h2>Sorted by what needs you, not by when it arrived.</h2>
+          <p>Mail, chats and team messages sit in one list — split into <b>needs a reply</b>, <b>for your info</b> and a single bundle for bots and newsletters. Open a thread and the reply is already drafted, in your tone, waiting for you.</p>
         </div>
-        <div class="scrollx"><div class="inbox">
+      </div>
+
+      <div class="app">
+        <div class="appbar">
+          <span class="tl" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="ab"><svg><use href="#logo"/></svg>Orbit</span>
+          <nav aria-hidden="true"><span class="on">Inbox</span><span>Contacts</span><span>Files</span><span>Tasks</span><span>Accounting</span></nav>
+          <span class="search" aria-hidden="true"><svg width="15" height="15"><use href="#i-search"/></svg>Search everything<kbd>⌘K</kbd></span>
+        </div>
+
+        <div class="inbox">
+          <!-- left rail -->
           <div class="rail">
-            <span class="lbl">Channels</span>
-            <a class="on">All <b>124</b></a>
-            <a><i style="background:var(--expense)"></i> Work Mail <b>38</b></a>
-            <a><i style="background:var(--expense)"></i> Personal <b>21</b></a>
-            <a><i style="background:var(--blue)"></i> iCloud <b>9</b></a>
-            <a><i style="background:var(--blue)"></i> Telegram <b>12</b></a>
-            <a><i style="background:var(--green)"></i> WhatsApp <b>18</b></a>
-            <a><i style="background:var(--violet)"></i> Discord <b>4</b></a>
-            <a><i style="background:var(--teal)"></i> Team <b>22</b></a>
+            <span class="n on-mock" style="top:12px; right:-11px">1</span>
+            <div class="worlds" aria-label="World"><span class="on">Work</span><span>Business</span><span>Private</span></div>
+            <span class="lbl">Views</span>
+            <div class="it on"><svg><use href="#i-focus"/></svg>Focus <span class="c">5</span></div>
+            <div class="it"><svg><use href="#i-inbox"/></svg>Everything <span class="c">124</span></div>
+            <div class="it"><svg><use href="#i-clock"/></svg>Waiting on others <span class="c">7</span></div>
+            <div class="it"><svg><use href="#i-draft"/></svg>Drafts <span class="c">3</span></div>
+            <div class="it"><svg><use href="#i-check"/></svg>Done</div>
+            <span class="lbl ch">Channels</span>
+            <div class="it ch"><i style="background:var(--ch-mail)"></i>Mail <span class="c">38</span></div>
+            <div class="it ch"><i style="background:var(--ch-tg)"></i>Telegram <span class="c">12</span></div>
+            <div class="it ch"><i style="background:var(--ch-wa)"></i>WhatsApp <span class="c">18</span></div>
+            <div class="it ch"><i style="background:var(--ch-dc)"></i>Discord <span class="c">4</span></div>
+            <div class="it ch"><i style="background:var(--ch-team)"></i>Team <span class="c">22</span></div>
           </div>
-          <div>
-            <div class="list">
-              <div class="mail">
-                <div class="r1"><span class="from">Sarah Klein</span><span class="badge">✉ Mail</span><span class="t">12 min</span></div>
-                <div class="subj">Q2 report is ready for review</div>
-                <div class="prev">Hi, the quarterly numbers are in — could you take a look before Friday?</div>
-              </div>
-              <div class="mail sel">
-                <div class="r1"><span class="from">Michael Berg</span><span class="badge">✈ Telegram</span><span class="t">59 min</span></div>
+
+          <!-- thread list -->
+          <div class="list">
+            <span class="n on-mock" style="top:154px; right:-11px">2</span>
+            <div class="listhead">
+              <h3>Focus</h3><span class="sub">3 need you · 2 FYI</span>
+              <span class="seg" aria-hidden="true"><span class="on">Priority</span><span>Newest</span></span>
+            </div>
+
+            <div class="grp">Needs your reply <span class="cnt">3</span></div>
+            <div class="row unread sel">
+              <span class="av" style="background:#dbeafe">MB<span class="src" style="background:var(--ch-tg)">T</span></span>
+              <div>
+                <div class="r1"><span class="who">Michael Berg</span><span class="time">09:41</span></div>
                 <div class="subj">Re: partnership proposal</div>
-                <div class="prev">Thanks for the deck — the team is on board, let's schedule a call next week.</div>
-              </div>
-              <div class="mail">
-                <div class="r1"><span class="from">Signals Bot</span><span class="badge">✈ Telegram</span><span class="t">1 h</span></div>
-                <div class="subj">Portfolio update #4471</div>
-                <div class="prev">Current drawdown 3.2% (threshold 25%). All systems nominal.</div>
-              </div>
-              <div class="mail">
-                <div class="r1"><span class="from">Anna Weber</span><span class="badge">✉ Mail</span><span class="t">2 h</span></div>
-                <div class="subj">Invoice #2026-118</div>
-                <div class="prev">Please find attached the invoice for May services. Payment due in 14 days.</div>
+                <div class="prev">The team is on board — can we do a call next week?</div>
+                <div class="tags"><span class="pill accent">Draft ready</span></div>
               </div>
             </div>
-            <div class="aibar">
-              <span class="aibtn p">✨ AI draft</span>
-              <span class="aibtn">🖊 Rewrite</span>
-              <span class="aibtn">🌐 Translate</span>
-              <span class="note">Drafts stay in your outbox until you hit Send.</span>
+            <div class="row unread">
+              <span class="av" style="background:#fde2d4">SK<span class="src" style="background:var(--ch-mail)">@</span></span>
+              <div>
+                <div class="r1"><span class="who">Sarah Klein</span><span class="time">08:55</span></div>
+                <div class="subj">Q2 report ready for review</div>
+                <div class="prev">Could you take a look before Friday? Numbers are attached.</div>
+                <div class="tags"><span class="pill warn">Due Fri 7 Nov</span></div>
+              </div>
+            </div>
+            <div class="row unread">
+              <span class="av" style="background:#dcfce7">JL<span class="src" style="background:var(--ch-wa)">W</span></span>
+              <div>
+                <div class="r1"><span class="who">Julia Lenz</span><span class="time">Yesterday</span></div>
+                <div class="subj">Contract draft — two questions</div>
+                <div class="prev">Clause 4 and the notice period, see my notes below.</div>
+                <div class="tags"><span class="pill accent">Draft ready</span></div>
+              </div>
+            </div>
+
+            <div class="grp">For your info <span class="cnt">2</span></div>
+            <div class="row">
+              <span class="av" style="background:#ede9fe">AW<span class="src" style="background:var(--ch-mail)">@</span></span>
+              <div>
+                <div class="r1"><span class="who">Anna Weber</span><span class="time">Yesterday</span></div>
+                <div class="subj">Invoice #2026-118 · 1.240,00 €</div>
+                <div class="prev ok">✓ Booked to accounting · payable in 14 days</div>
+              </div>
+            </div>
+            <div class="row">
+              <span class="av" style="background:#e1f1ed">TN<span class="src" style="background:var(--ch-team)">M</span></span>
+              <div>
+                <div class="r1"><span class="who">Team North</span><span class="time">Mon</span></div>
+                <div class="subj">Maintenance window Thursday 09–13 h</div>
+                <div class="prev ok">✓ Added to calendar · systems read-only</div>
+              </div>
+            </div>
+
+            <div class="bundle">
+              <span class="stack" aria-hidden="true"><span style="background:var(--ch-tg)">T</span><span style="background:var(--ch-mail)">@</span><span style="background:var(--ch-dc)">D</span></span>
+              <span><b>14 updates</b> from bots &amp; newsletters</span>
+              <span class="go">Open bundle →</span>
             </div>
           </div>
-        </div></div>
-      </div>
-    </section>
 
-    <!-- ===== ACCOUNTING ===== -->
-    <section class="view">
-      <div class="view-head">
-        <div class="eyebrow">Accounting</div>
-        <h2>Invoices and receipts, tallied and reconciled by themselves.</h2>
-        <p>The AI recognises incoming invoices and payment receipts in your mail, sums up <b>open items per currency</b>, and ticks them off automatically once they match an entry in your accounting tool. One tap forwards a receipt straight to bookkeeping.</p>
-      </div>
-      <div class="app">
-        <div class="topbar">
-          <span class="tl"><i></i><i></i><i></i></span>
-          <span class="b"><span class="lg"></span> Orbit · Accounting</span>
-          <nav><a>Inbox</a><a>Files</a><a>Tasks</a><a class="on">Accounting</a></nav>
+          <!-- reading pane -->
+          <div class="read">
+            <div class="rhead">
+              <h3>Re: partnership proposal</h3>
+              <div class="rmeta">
+                <span class="pill dot" style="--dot:var(--ch-tg)">Telegram</span>
+                <span class="pill">Work</span>
+                <span class="sum">Wants a call next week to agree the pilot scope.</span>
+              </div>
+            </div>
+            <div class="ctx">
+              <div class="cg">
+                <div><span>Berg &amp; Partner · since</span><b>Mar 2025 · 23 threads</b></div>
+                <div><span>Open deal</span><b>Pilot · 18.000 €</b></div>
+                <div><span>Open task</span><b>Sign NDA (overdue)</b></div>
+              </div>
+            </div>
+            <div class="rbody">
+              <div class="earlier"><span class="av" style="background:#e1f1ed;color:var(--accent)">You</span><span><b>You</b> · 3 Nov — “Here's the deck for the pilot, happy to walk you through it.”</span><span class="more3">+ 2 earlier</span></div>
+              <div class="msg">
+                <span class="av" style="background:#dbeafe">MB</span>
+                <div>
+                  <div class="mh"><b>Michael Berg</b><span>09:41</span></div>
+                  <p>Thanks for the deck — the team is on board. Let's get a call in next week to agree the pilot scope. Tuesday or Wednesday afternoon would work for us.</p>
+                </div>
+              </div>
+              <div class="found">
+                <span>Orbit noticed</span>
+                <span class="pill">Tue or Wed, afternoon</span>
+                <span class="pill">You're free Wed 14:00–16:00</span>
+              </div>
+              <div class="draft">
+                <span class="n on-mock" style="top:-11px; left:-11px">3</span>
+                <div class="dh"><svg><use href="#i-spark"/></svg>Suggested reply<span class="tone">Your tone · English</span></div>
+                <p>Hi Michael, great news — thank you. Wednesday 12 Nov at 14:00 works on our side; I'll send an invite with a short agenda for the pilot scope. Talk soon!</p>
+                <div class="dactions">
+                  <span class="tbtn send">Send <kbd>⌘↵</kbd></span>
+                  <span class="tbtn">Edit</span>
+                  <span class="tbtn">Rewrite</span>
+                  <span class="tbtn">Translate</span>
+                  <span class="note">Nothing goes out without you.</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="scrollx"><div class="acct">
-          <div class="acrow">
-            <span class="tag in">Income</span>
-            <div><div class="name">Signals Platform</div><div class="sub">Monthly settlement — June 2026</div></div>
-            <span class="amt" style="color:var(--income)">+249,00 $</span>
-            <span class="lex">→ bookkeeping</span>
-          </div>
-          <div class="acrow">
-            <span class="tag out">Expense</span>
-            <div><div class="name">CloudHost</div><div class="sub">Invoice payment confirmation</div></div>
-            <span class="amt" style="color:var(--expense)">−39,00 $</span>
-            <span class="lex done">✓ reconciled</span>
-          </div>
-          <div class="acrow">
-            <span class="tag out">Expense</span>
-            <div><div class="name">ServerHost</div><div class="sub">Invoice No. 100482</div></div>
-            <span class="amt" style="color:var(--expense)">−14,90 €</span>
-            <span class="lex">→ bookkeeping</span>
-          </div>
-          <div class="acrow">
-            <span class="tag in">Income</span>
-            <div><div class="name">Signals Platform</div><div class="sub">Payment confirmation</div></div>
-            <span class="amt" style="color:var(--income)">+95,00 €</span>
-            <span class="lex done">✓ reconciled</span>
-          </div>
-        </div></div>
+      </div>
+
+      <div class="legend">
+        <div><span class="n">1</span><span><b>Views instead of folders.</b> “Focus” shows only what matters to you — across every channel and inside the world you picked.</span></div>
+        <div><span class="n">2</span><span><b>Every row says what's next.</b> Draft ready, due date, already booked — you see the state without opening the message.</span></div>
+        <div><span class="n">3</span><span><b>The reply is already written.</b> Orbit checks your calendar, drafts in your tone and waits. You edit, rewrite, translate — or just press Send.</span></div>
       </div>
     </section>
 
-    <!-- ===== FILES ===== -->
-    <section class="view">
-      <div class="view-head">
-        <div class="eyebrow">Files &amp; knowledge</div>
-        <h2>Search your company drive — and get the answer, not just the file.</h2>
-        <p>Type one or two words. Orbit searches SharePoint by <b>name and content</b>, then the AI reads the matching documents and hands you a short summary of what actually matters.</p>
+    <!-- ================= ACCOUNTING ================= -->
+    <section class="view" id="accounting">
+      <div class="sh">
+        <div>
+          <p class="kicker">Accounting</p>
+          <h2>Invoices in your mail become bookings — and tick themselves off.</h2>
+          <p>Orbit spots invoices and payment receipts, totals <b>open items per currency</b>, and marks them reconciled once they match an entry in your bookkeeping. One click forwards a receipt to your accountant.</p>
+        </div>
       </div>
       <div class="app">
-        <div class="topbar">
-          <span class="tl"><i></i><i></i><i></i></span>
-          <span class="b"><span class="lg"></span> Orbit · Files</span>
-          <nav><a>Inbox</a><a class="on">Files</a><a>Tasks</a><a>Accounting</a></nav>
+        <div class="appbar">
+          <span class="tl" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="ab"><svg><use href="#logo"/></svg>Orbit</span>
+          <nav aria-hidden="true"><span>Inbox</span><span>Files</span><span>Tasks</span><span class="on">Accounting</span></nav>
+        </div>
+        <div class="acct-top">
+          <div><div class="k">Open · EUR</div><div class="v">1.254,90 €</div><div class="s">2 invoices, next due 19 Nov</div></div>
+          <div><div class="k">Open · USD</div><div class="v">39,00 $</div><div class="s">1 invoice</div></div>
+          <div><div class="k">Reconciled this month</div><div class="v">11 <span style="font-size:15px;color:var(--ink-60);font-weight:500">of 14</span></div><div class="s">matched automatically</div></div>
+        </div>
+        <div class="scrollx">
+          <table class="tbl">
+            <thead><tr><th>Item</th><th class="hide-sm">Found in</th><th class="r">Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><div class="name">Anna Weber</div><div class="sub">Invoice #2026-118 · October</div></td><td class="hide-sm sub">Work mail · yesterday</td><td class="amt out">−1.240,00 €</td><td><span class="pill warn">Open · due 19 Nov</span></td></tr>
+              <tr><td><div class="name">Signals Platform</div><div class="sub">Monthly settlement · October</div></td><td class="hide-sm sub">Work mail · 3 Nov</td><td class="amt in">+249,00 $</td><td><span class="pill good">Reconciled</span></td></tr>
+              <tr><td><div class="name">CloudHost</div><div class="sub">Payment confirmation</div></td><td class="hide-sm sub">Personal mail · 2 Nov</td><td class="amt out">−39,00 $</td><td><span class="pill">Send to accountant →</span></td></tr>
+              <tr><td><div class="name">ServerHost</div><div class="sub">Invoice No. 100482</div></td><td class="hide-sm sub">Work mail · 1 Nov</td><td class="amt out">−14,90 €</td><td><span class="pill warn">Open · due 15 Nov</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FILES ================= -->
+    <section class="view" id="files">
+      <div class="sh">
+        <div>
+          <p class="kicker">Files &amp; knowledge</p>
+          <h2>Ask your company drive a question — get the answer, with sources.</h2>
+          <p>Type a few words. Orbit searches SharePoint by <b>name and content</b>, reads the matching documents and answers in three lines — each point linked to the file it came from.</p>
+        </div>
+      </div>
+      <div class="app">
+        <div class="appbar">
+          <span class="tl" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="ab"><svg><use href="#logo"/></svg>Orbit</span>
+          <nav aria-hidden="true"><span>Inbox</span><span class="on">Files</span><span>Tasks</span><span>Accounting</span></nav>
         </div>
         <div class="files">
-          <div class="searchrow">
-            <div class="inp mono">bonus scheme KPI</div>
-            <span class="go">Search</span>
+          <div class="qrow">
+            <div class="inp"><svg><use href="#i-search"/></svg>How is the 2026 bonus calculated?</div>
           </div>
-          <div class="aicard">
-            <div class="h">✨ AI summary</div>
-            <p>The <b style="color:var(--ink)">2026 bonus scheme</b> ties payout to three KPIs — revenue, retention and upsell rate. Achievement starts at 80% and is capped at 120%. Paid quarterly; the Q2 figures are in the attached KPI report.</p>
+          <div class="answer">
+            <div class="dh"><svg width="15" height="15"><use href="#i-spark"/></svg>Answer from 2 documents</div>
+            <ul>
+              <li><span>The payout depends on three KPIs: revenue, retention and upsell rate.<sup>[1]</sup></span></li>
+              <li><span>It starts at 80 % target achievement and is capped at 120 %.<sup>[1]</sup></span></li>
+              <li><span>Paid quarterly — Q2 achievement was 104 %.<sup>[2]</sup></span></li>
+            </ul>
           </div>
-          <div class="frow"><span class="ic">📊</span><div><div class="fn">Bonus Scheme 2026 – Concept.pptx</div><div class="fm">Modified 3 days ago · 4.2 MB</div></div><span class="site">Team site</span><span class="open">Open</span></div>
-          <div class="frow"><span class="ic">📈</span><div><div class="fn">KPI Report Q2 2026.xlsx</div><div class="fm">Modified 6 days ago · 88 KB</div></div><span class="site">Team site</span><span class="open">Open</span></div>
+          <div class="frow"><span class="ficon" style="background:#c2410c">PPTX</span><div><div class="fn"><span class="ref">1</span>Bonus Scheme 2026 – Concept.pptx</div><div class="fm">Team site · changed 3 days ago · 4.2 MB</div></div><span class="btn outline sm open">Open</span></div>
+          <div class="frow"><span class="ficon" style="background:#15803d">XLSX</span><div><div class="fn"><span class="ref">2</span>KPI Report Q2 2026.xlsx</div><div class="fm">Team site · changed 6 days ago · 88 KB</div></div><span class="btn outline sm open">Open</span></div>
         </div>
       </div>
     </section>
 
-    <!-- ===== SLIDES ===== -->
-    <section class="view">
-      <div class="view-head">
-        <div class="eyebrow">Slide library</div>
-        <h2>Every slide you've ever made, auto-tagged and reusable.</h2>
-        <p>Drop in past decks; Orbit splits and <b>tags every slide</b>. Tell the AI the purpose of a new presentation and it assembles a draft from your library — then exports a real, editable <b>.pptx</b>.</p>
+    <!-- ================= SLIDES ================= -->
+    <section class="view" id="slides">
+      <div class="sh">
+        <div>
+          <p class="kicker">Slide library</p>
+          <h2>Every slide you've ever made, tagged and ready to reuse.</h2>
+          <p>Drop in old decks; Orbit splits them and <b>tags every slide</b>. Describe the new presentation in a sentence and it picks the slides — then exports a real, editable <b>.pptx</b>.</p>
+        </div>
       </div>
       <div class="app">
-        <div class="topbar">
-          <span class="tl"><i></i><i></i><i></i></span>
-          <span class="b"><span class="lg"></span> Orbit · Slides</span>
-          <nav><a>Inbox</a><a>Files</a><a class="on">Slides</a><a>Tasks</a></nav>
+        <div class="appbar">
+          <span class="tl" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="ab"><svg><use href="#logo"/></svg>Orbit</span>
+          <nav aria-hidden="true"><span>Inbox</span><span>Files</span><span class="on">Slides</span><span>Tasks</span></nav>
         </div>
         <div class="slides">
-          <div class="tags">
-            <span class="tag2 on">all · 36</span>
-            <span class="tag2">topic:revenue</span>
-            <span class="tag2">topic:market-share</span>
-            <span class="tag2">topic:overview</span>
-            <span class="tag2">topic:results-report</span>
-            <span class="tag2">topic:agenda</span>
-            <span class="tag2">type:chart</span>
-            <span class="tag2">type:title</span>
-            <span class="tag2">topic:forecast 2026</span>
+          <div class="brief"><svg width="17" height="17" style="color:var(--accent);flex:none"><use href="#i-spark"/></svg><span><b>Brief:</b> “Q2 results for the board, 10 minutes”</span><span class="btn accent sm">Assemble</span></div>
+          <div class="tagrow">
+            <span class="pill accent">All · 36</span><span class="pill">Revenue</span><span class="pill">Market share</span><span class="pill">Results</span><span class="pill">Agenda</span><span class="pill">Chart</span><span class="pill">Forecast 2026</span>
           </div>
-          <div class="slidegrid">
-            <div class="thumb"><div class="pic" style="background:linear-gradient(135deg,#16324a,#0e2233)">Title slide</div><div class="cap">Q2 Review · Cover</div></div>
-            <div class="thumb"><div class="pic" style="background:linear-gradient(135deg,#123a34,#0d2420)">Agenda</div><div class="cap">Q2 Review · Agenda</div></div>
-            <div class="thumb"><div class="pic" style="background:linear-gradient(135deg,#2a2350,#161033)">Bar chart</div><div class="cap">Revenue by region</div></div>
-            <div class="thumb"><div class="pic" style="background:linear-gradient(135deg,#3a2418,#22140c)">KPI table</div><div class="cap">Results · KPIs</div></div>
+          <div class="sgrid">
+            <div class="thumb pick"><span class="chk">✓</span><div class="pic cover"><i class="t"></i><i class="t2"></i></div><div class="cap">Q2 Review · Cover<span>title</span></div></div>
+            <div class="thumb pick"><span class="chk">✓</span><div class="pic"><i class="t"></i><div class="lines"><i style="width:80%"></i><i style="width:65%"></i><i style="width:72%"></i><i style="width:50%"></i></div></div><div class="cap">Agenda<span>agenda</span></div></div>
+            <div class="thumb pick"><span class="chk">✓</span><div class="pic"><i class="t"></i><i class="t2"></i><div class="bars"><i style="height:45%"></i><i style="height:70%"></i><i style="height:58%"></i><i style="height:92%"></i></div></div><div class="cap">Revenue by region<span>chart</span></div></div>
+            <div class="thumb"><div class="pic"><i class="t"></i><div class="kpis"><i></i><i></i><i></i><i></i></div></div><div class="cap">Results · KPIs<span>results</span></div></div>
           </div>
-          <div class="slidebar">
-            <span class="basket">🧺 Basket · 3 slides selected</span>
-            <span class="export">⬇ Export as .pptx</span>
-          </div>
+          <div class="sbar"><span><b>3 slides</b> in the basket · about 4 minutes</span><span class="btn primary sm">Export .pptx</span></div>
         </div>
       </div>
     </section>
 
-    <!-- ===== TASKS ===== -->
-    <section class="view">
-      <div class="view-head">
-        <div class="eyebrow">Tasks</div>
-        <h2>Deadlines lifted straight out of your messages.</h2>
-        <p>When a mail says "by next Wednesday", the AI turns it into a dated task and shows you <b>why</b> — with the sentence it came from. A "AI deadline" chip marks anything it created, so nothing slips.</p>
+    <!-- ================= TASKS ================= -->
+    <section class="view" id="tasks">
+      <div class="sh">
+        <div>
+          <p class="kicker">Tasks</p>
+          <h2>“By next Wednesday” becomes a dated task — with the sentence it came from.</h2>
+          <p>When a message sets a deadline, Orbit creates the task and quotes the line that triggered it, so you can see <b>why</b> it's there. An <b>AI deadline</b> chip marks everything it created.</p>
+        </div>
       </div>
       <div class="app">
-        <div class="topbar">
-          <span class="tl"><i></i><i></i><i></i></span>
-          <span class="b"><span class="lg"></span> Orbit · Tasks</span>
-          <nav><a>Inbox</a><a>Files</a><a class="on">Tasks</a><a>Accounting</a></nav>
+        <div class="appbar">
+          <span class="tl" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="ab"><svg><use href="#logo"/></svg>Orbit</span>
+          <nav aria-hidden="true"><span>Inbox</span><span>Files</span><span class="on">Tasks</span><span>Accounting</span></nav>
         </div>
         <div class="scrollx"><div class="board">
-          <div class="cola over">
-            <h4>Overdue <span>2</span></h4>
-            <div class="task">
-              <div class="tt">Q3 campaign ends</div>
-              <div class="ev">"Campaign runs until 28 Nov" — Thomas Wagner</div>
-              <div class="foot"><span class="due">Fri 28 Nov</span><span class="kifrist">AI DEADLINE</span></div>
-            </div>
-            <div class="task">
-              <div class="tt">Reminder: supplier invoice</div>
-              <div class="ev">From scan "2026-01-12_invoice.pdf"</div>
-              <div class="foot"><span class="due">Mon 02 Feb</span><span class="kifrist">AI DEADLINE</span></div>
-            </div>
+          <div class="col over">
+            <h4>Overdue <span class="c">2</span></h4>
+            <div class="task"><div class="tt">Pay supplier invoice</div><q>Payable by 3 November.</q><div class="from">From scan 2026-10-20_invoice.pdf</div><div class="foot"><span class="due">Mon 3 Nov</span><span class="pill accent">AI deadline</span></div></div>
+            <div class="task"><div class="tt">Sign NDA for Berg &amp; Partner</div><q>Please return it signed by Tuesday.</q><div class="from">Michael Berg · Telegram</div><div class="foot"><span class="due">Tue 4 Nov</span><span class="pill accent">AI deadline</span></div></div>
           </div>
-          <div class="cola today">
-            <h4>Today <span>2</span></h4>
-            <div class="task">
-              <div class="tt">Join Teams meeting · Team North</div>
-              <div class="ev">"Microsoft Teams meeting" — Michael Berg</div>
-              <div class="foot"><span class="due">Tue 07 Jul</span><span class="kifrist">AI DEADLINE</span></div>
-            </div>
-            <div class="task">
-              <div class="tt">Escalate case R2-4471</div>
-              <div class="ev">"…open, escalated, overdue" — BillingApp</div>
-              <div class="foot"><span class="due">Tue 07 Jul</span></div>
-            </div>
+          <div class="col today">
+            <h4>Today <span class="c">2</span></h4>
+            <div class="task"><div class="tt">Join Teams call · Team North</div><q>Microsoft Teams meeting, 15:00.</q><div class="from">Team North · M365</div><div class="foot"><span class="due">Wed 5 Nov</span><span class="pill accent">AI deadline</span></div></div>
+            <div class="task"><div class="tt">Escalate case R2-4471</div><q>…open, escalated, overdue.</q><div class="from">BillingApp · Mail</div><div class="foot"><span class="due">Wed 5 Nov</span></div></div>
           </div>
-          <div class="cola week">
-            <h4>This week <span>3</span></h4>
-            <div class="task">
-              <div class="tt">Schedule maintenance window</div>
-              <div class="ev">"…runs 09–13h tomorrow" — Anna Weber</div>
-              <div class="foot"><span class="due">Wed 08 Jul</span><span class="kifrist">AI DEADLINE</span></div>
-            </div>
-            <div class="task">
-              <div class="tt">Product launch &amp; pre-sale</div>
-              <div class="ev">"Launch and pre-sale start 15.07." — David Fischer</div>
-              <div class="foot"><span class="due">Tue 15 Jul</span><span class="kifrist">AI DEADLINE</span></div>
-            </div>
+          <div class="col week">
+            <h4>This week <span class="c">2</span></h4>
+            <div class="task"><div class="tt">Review Q2 report</div><q>Could you take a look before Friday?</q><div class="from">Sarah Klein · Mail</div><div class="foot"><span class="due">Fri 7 Nov</span><span class="pill accent">AI deadline</span></div></div>
+            <div class="task"><div class="tt">Partnership call · pilot scope</div><q>Tuesday or Wednesday afternoon.</q><div class="from">Michael Berg · Telegram</div><div class="foot"><span class="due">Wed 12 Nov</span><span class="pill accent">AI deadline</span></div></div>
           </div>
         </div></div>
       </div>
     </section>
 
-    <!-- ===== AND MORE ===== -->
-    <section class="view">
-      <div class="view-head">
-        <div class="eyebrow">Rounding it out</div>
-        <h2>The rest of a working day, in the same place.</h2>
-        <p>Beyond the five pillars, Orbit keeps the everyday tools right where the messages already are — so you rarely reach for another tab.</p>
+    <!-- ================= MORE ================= -->
+    <section class="view" id="more">
+      <div class="sh">
+        <div>
+          <p class="kicker">Rounding it out</p>
+          <h2>The rest of a working day, right next to your messages.</h2>
+        </div>
       </div>
-      <div class="more">
-        <div class="mtile"><span class="mi">📅</span><b>Calendar</b><p>Your appointments synced in — today and what's next at a glance, beside the mail they came from.</p></div>
-        <div class="mtile"><span class="mi">👤</span><b>Contacts &amp; CRM</b><p>Every sender becomes a contact with full history, company and open items.</p></div>
-        <div class="mtile"><span class="mi">📚</span><b>Knowledge base</b><p>Facts the AI lifts out of your messages — searchable and linked back to the source.</p></div>
-        <div class="mtile"><span class="mi">👁</span><b>Mail preview</b><p>Read and reply in a split view — no signature icons in the way — without leaving the thread list.</p></div>
-        <div class="mtile key"><span class="mi">🔒</span><b>Three separate worlds</b><p>Private, business and work stay strictly apart. Nothing from one ever leaks into another.</p></div>
+      <div class="tiles">
+        <div class="tile"><span class="ti"><svg><use href="#i-cal"/></svg></span><b>Calendar</b><p>Today and what's next, beside the mail the appointment came from. Drafts check it before proposing a time.</p></div>
+        <div class="tile"><span class="ti"><svg><use href="#i-user"/></svg></span><b>Contacts &amp; CRM</b><p>Every sender becomes a contact — with company, full history across channels and open items.</p></div>
+        <div class="tile"><span class="ti"><svg><use href="#i-book"/></svg></span><b>Knowledge base</b><p>Facts lifted out of your messages, searchable and linked back to the source.</p></div>
+        <div class="tile"><span class="ti"><svg><use href="#i-eye"/></svg></span><b>Clean mail preview</b><p>Read and reply in a split view — tracking pixels and signature clutter stripped out.</p></div>
+        <div class="tile"><span class="ti"><svg><use href="#i-lock"/></svg></span><b>Three separate worlds</b><p>Nothing from one world ever shows up in another — not in search, not in AI drafts.</p><div class="worlds3"><span>Private</span><span>Business</span><span>Work</span></div></div>
       </div>
     </section>
 
-    <!-- ===== CLOSING ===== -->
-    <div class="close">
-      <div class="pt">
-        <h3><em>◆</em> Private by design</h3>
-        <p>Self-hosted on your own server. Your mail, files and contacts never leave it — no third-party cloud reading your inbox.</p>
-      </div>
-      <div class="pt">
-        <h3><em>◆</em> The AI proposes, you decide</h3>
-        <p>Every reply, forward and booking is a draft. Orbit prepares the work; you review and approve before anything goes out.</p>
-      </div>
-      <div class="pt">
-        <h3><em>◆</em> One cockpit, many jobs</h3>
-        <p>Messaging, CRM, accounting, document filing, a slide library and a task board — the tools of a work day, in a single place.</p>
-      </div>
+    <div class="promise">
+      <div><h3>Private by design</h3><p>Self-hosted on your own server. Mail, files and contacts never leave it.</p></div>
+      <div><h3>The AI proposes, you decide</h3><p>Replies, forwards and bookings are drafts. Orbit prepares the work; you approve.</p></div>
+      <div><h3>One cockpit, many jobs</h3><p>Messaging, CRM, accounting, files, slides and tasks — the tools of a work day, in one place.</p></div>
     </div>
-
   </div>
+</main>
 
-  <footer class="col" data-author="Pitt Petruschke (PiP)" data-app="Orbit">
+<footer class="site-footer" data-author="Pitt Petruschke (PiP)" data-app="Orbit">
+  <div class="container">
     <span class="mono">Orbit v0.40.0</span>
     <span>Unified messaging hub &amp; AI CRM</span>
-    <span style="margin-left:auto">© Pitt Petruschke — screens shown with sample data</span>
-  </footer>
-</div>
-<style>.wrap{min-height:100vh}</style>
+    <span class="right">© Pitt Petruschke — screens shown with sample data</span>
+  </div>
+</footer>
 </body>
 </html>
