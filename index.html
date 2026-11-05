@@ -11,6 +11,8 @@
 <meta property="og:description" content="Every message in one place — and an AI that does the work.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230f766e'/><circle cx='16' cy='16' r='5' fill='white'/><ellipse cx='16' cy='16' rx='12' ry='5' fill='none' stroke='white' stroke-width='2' transform='rotate(-28 16 16)'/></svg>">
+<link rel="alternate" hreflang="en" href="https://cryptohopper1904-jpg.github.io/orbit/">
+<link rel="alternate" hreflang="de" href="https://cryptohopper1904-jpg.github.io/orbit/de/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -85,6 +87,11 @@
   @media (max-width:1023px){.site-nav{display:none}}
   @media (max-width:560px){.selfhost{display:none}}
   .brand .ver{display:none}
+
+  .lang{display:inline-flex; border:1px solid var(--border); background:var(--surface); border-radius:8px; padding:2px; font-size:13px; font-weight:600}
+  .lang a, .lang span{padding:3px 8px; border-radius:6px; text-decoration:none; color:var(--ink-60)}
+  .lang span{background:var(--muted); color:var(--ink)}
+  .lang a:hover{color:var(--ink)}
 
   /* ---------- hero ---------- */
   .hero{position:relative; isolation:isolate; border-bottom:1px solid var(--border)}
@@ -202,7 +209,7 @@
   .draft{border:1px solid rgba(15,118,110,.3); background:linear-gradient(180deg,#f0f8f5,#fff 70%); border-radius:12px; padding:14px 16px; position:relative}
   .draft .dh{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--accent)}
   .draft .dh svg{width:15px; height:15px}
-  .draft .dh .tone{margin-left:auto; text-transform:none; letter-spacing:0; font-weight:500; color:var(--ink-60)}
+  .draft .dh .tone{white-space:nowrap; margin-left:auto; text-transform:none; letter-spacing:0; font-weight:500; color:var(--ink-60)}
   .draft p{margin:8px 0 0; font-size:14.5px; line-height:1.6; color:var(--ink)}
   .dactions{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:14px}
   .tbtn{display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface); font-size:13px; font-weight:600; color:var(--ink-80)}
@@ -376,6 +383,7 @@
       <a href="#tasks">Tasks</a>
     </nav>
     <div class="right">
+      <nav class="lang" aria-label="Language / Sprache"><a href="de/" hreflang="de" lang="de">DE</a><span aria-current="true">EN</span></nav>
       <span class="selfhost">Self-hosted</span>
       <a class="btn primary sm" href="#inbox">See the inbox</a>
     </div>
